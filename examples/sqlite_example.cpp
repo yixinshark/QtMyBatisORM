@@ -5,8 +5,6 @@
 #include <QtMyBatisORM/session.h>
 #include <QtMyBatisORM/DataModels.h>
 
-using namespace QtMyBatisORM;
-
 // 定义一个简单的用户类
 class User {
 public:
@@ -57,7 +55,7 @@ int main(int argc, char *argv[])
     qDebug() << "QtMyBatisORM initialized successfully with SQLite database at:" << dbPath;
     
     // 获取会话
-    QSharedPointer<Session> session = orm->openSession();
+    QSharedPointer<QtMyBatisORM::Session> session = orm->openSession();
     
     if (!session) {
         qCritical() << "Failed to open session";
@@ -144,7 +142,7 @@ int main(int argc, char *argv[])
             qDebug() << "Remaining users:" << remainingUsers.size();
         }
         
-    } catch (const QtMyBatisException& e) {
+    } catch (const QtMyBatisORM::QtMyBatisException& e) {
         qCritical() << "Error:" << e.message();
         
         // 如果发生错误，回滚事务

@@ -5,8 +5,6 @@
 #include <QtMyBatisORM/session.h>
 #include <QtMyBatisORM/DataModels.h>
 
-using namespace QtMyBatisORM;
-
 // 定义一个简单的产品类
 class Product {
 public:
@@ -63,7 +61,7 @@ int main(int argc, char *argv[])
     qDebug() << "QtMyBatisORM initialized successfully with MySQL database";
     
     // 获取会话
-    QSharedPointer<Session> session = orm->openSession();
+    QSharedPointer<QtMyBatisORM::Session> session = orm->openSession();
     
     if (!session) {
         qCritical() << "Failed to open session";
@@ -170,7 +168,7 @@ int main(int argc, char *argv[])
                      << productMap["name"].toString() << productMap["stock"].toInt();
         }
         
-    } catch (const QtMyBatisException& e) {
+    } catch (const QtMyBatisORM::QtMyBatisException& e) {
         qCritical() << "Error:" << e.message();
         
         // 如果发生错误，回滚事务
