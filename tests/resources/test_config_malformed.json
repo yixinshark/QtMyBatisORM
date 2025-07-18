@@ -1,0 +1,4 @@
+{
+    "driver": "QSQLITE",
+    "database": "test_db"
+    // Missing comma and invalid JSON

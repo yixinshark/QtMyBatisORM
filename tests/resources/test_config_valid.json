@@ -1,0 +1,18 @@
+{
+    "driver": "QSQLITE",
+    "host": "localhost",
+    "port": 3306,
+    "database": "test_db",
+    "username": "test_user",
+    "password": "test_pass",
+    "connectionPool": {
+        "maxConnections": 15,
+        "minConnections": 3,
+        "maxIdleTime": 600
+    },
+    "cache": {
+        "enabled": true,
+        "maxSize": 2000,
+        "expireTime": 900
+    }
+}

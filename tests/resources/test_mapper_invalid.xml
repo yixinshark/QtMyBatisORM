@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper>
+    <!-- Missing namespace attribute -->
+    <select id="selectUser">
+        SELECT * FROM users
+    </select>
+</mapper>

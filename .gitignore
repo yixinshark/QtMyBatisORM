@@ -1,0 +1,131 @@
+# Build directories
+build/
+build-*/
+cmake-build-*/
+.cmake/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!CMakePresets.json
+!cmake/QtMyBatisORMConfig.cmake.in
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Qt generated files
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.moc
+
+# Qt Creator files
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+CMakeLists.txt.user*
+*.autosave
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test results
+test_results/
+test_output/
+*.test
+
+# Documentation build
+docs/build/
+docs/_build/
+
+# Package files
+*.tar.gz
+*.zip
+*.7z
+
+# Database files (if any test databases)
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+
+# Conan files (if using Conan package manager)
+conanfile.txt.bak
+conanbuildinfo.cmake
+conandata.yml
+
+# vcpkg files (if using vcpkg)
+vcpkg_installed/
+
+# Coverage files
+*.gcov
+*.gcno
+*.gcda
+coverage/
+lcov.info
+
+# Profiling files
+*.prof
+*.gprof
+
+# Memory check files
+*.memcheck
+valgrind-out.txt 

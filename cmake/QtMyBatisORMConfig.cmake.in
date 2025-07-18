@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Find dependencies
+find_dependency(Qt6 REQUIRED COMPONENTS Core Sql Xml)
+
+# Include targets file
+include("${CMAKE_CURRENT_LIST_DIR}/QtMyBatisORMTargets.cmake")

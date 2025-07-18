@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.example.UserMapper">
+    <resultMap id="UserResultMap" type="User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+    </resultMap>
+    
+    <select id="selectUserById" parameterType="int" resultType="User">
+        SELECT user_id, user_name, user_email 
+        FROM users 
+        WHERE user_id = #{id}
+    </select>
+    
+    <select id="selectUsersByName" parameterType="string" resultType="User" useCache="true">
+        SELECT user_id, user_name, user_email 
+        FROM users 
+        WHERE user_name LIKE #{name}
+        <if test="active != null">
+            AND active = #{active}
+        </if>
+    </select>
+    
+    <insert id="insertUser" parameterType="User">
+        INSERT INTO users (user_name, user_email) 
+        VALUES (#{name}, #{email})
+    </insert>
+    
+    <update id="updateUser" parameterType="User">
+        UPDATE users 
+        SET user_name = #{name}, user_email = #{email}
+        WHERE user_id = #{id}
+    </update>
+    
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM users WHERE user_id = #{id}
+    </delete>
+    
+    <select id="selectUsersByIds" parameterType="list" resultType="User">
+        SELECT user_id, user_name, user_email 
+        FROM users 
+        WHERE user_id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    
+    <sql id="createUserTable">
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INT AUTO_INCREMENT PRIMARY KEY,
+            user_name VARCHAR(100) NOT NULL,
+            user_email VARCHAR(255) UNIQUE,
+            active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    </sql>
+</mapper>

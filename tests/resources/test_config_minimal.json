@@ -1,0 +1,4 @@
+{
+    "driver": "QMYSQL",
+    "database": "minimal_db"
+}
