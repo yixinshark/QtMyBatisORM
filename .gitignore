@@ -10,6 +10,11 @@ cmake-build-*/
 .kiro/
 .specstory/
 
+# Project specific files not for version control
+CMakePresets.json
+CMakeLists.txt.before_ide_fix
+fix_moc.sh
+
 # CMake generated files
 CMakeFiles/
 CMakeCache.txt
