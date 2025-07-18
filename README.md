@@ -488,11 +488,11 @@ QVariantList results = session->selectList("SELECT * FROM users WHERE age > :age
 
 ## 贡献指南
 
-1. Fork 项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 打开 Pull Request
+1. Fork 本项目 [QtMyBatisORM](https://github.com/yixinshark/QtMyBatisORM)
+2. 创建特性分支 (`git checkout -b feature/your-feature-name`)
+3. 提交更改 (`git commit -m 'Add your feature description'`)
+4. 推送到分支 (`git push origin feature/your-feature-name`)
+5. 打开 [Pull Request](https://github.com/yixinshark/QtMyBatisORM/pulls)
 
 ## 许可证
 
