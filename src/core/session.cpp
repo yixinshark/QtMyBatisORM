@@ -213,6 +213,41 @@ int Session::remove(const QString& statementId, const QVariantMap& parameters)
     }
 }
 
+int Session::execute(const QString& sql, const QVariantMap& parameters)
+{
+    try {
+        checkClosed();
+        return m_executor->update(sql, parameters);
+    } catch (const SessionException& e) {
+        SessionException ex(e);
+        ex.setContext(QLatin1String("operation"), QLatin1String("execute"));
+        ex.setContext(QStringLiteral("sql"), sql);
+        ex.setContext(QStringLiteral("parameters"), parameters);
+        throw ex;
+    } catch (const QtMyBatisException& e) {
+        SessionException ex(
+            QLatin1String("Failed to execute SQL: %1") + e.message(),
+            "SESSION_EXECUTE_ERROR"
+        );
+        ex.setContext(QLatin1String("operation"), QLatin1String("execute"));
+        ex.setContext(QStringLiteral("sql"), sql);
+        ex.setContext(QStringLiteral("parameters"), parameters);
+        ex.setContext(QStringLiteral("originalError"), e.message());
+        ex.setContext(QStringLiteral("originalCode"), e.code());
+        throw ex;
+    } catch (const std::exception& e) {
+        SessionException ex(
+            QLatin1String("Unexpected error in execute: %1") + QString::fromUtf8(e.what()),
+            "SESSION_UNEXPECTED_ERROR"
+        );
+        ex.setContext(QLatin1String("operation"), QLatin1String("execute"));
+        ex.setContext(QStringLiteral("sql"), sql);
+        ex.setContext(QStringLiteral("parameters"), parameters);
+        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        throw ex;
+    }
+}
+
 void Session::beginTransaction()
 {
     beginTransaction(0); // 无超时

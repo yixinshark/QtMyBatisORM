@@ -36,6 +36,9 @@ public:
     int update(const QString& statementId, const QVariantMap& parameters = {});
     int remove(const QString& statementId, const QVariantMap& parameters = {});
     
+    // 执行原始SQL语句
+    int execute(const QString& sql, const QVariantMap& parameters = {});
+    
     // 批量操作
     int batchInsert(const QString& statementId, const QList<QVariantMap>& parametersList);
     int batchUpdate(const QString& statementId, const QList<QVariantMap>& parametersList);
