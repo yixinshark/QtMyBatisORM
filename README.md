@@ -97,7 +97,7 @@ QtMyBatisORM/
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/QtMyBatisORM.git
+git clone https://github.com/yixinshark/QtMyBatisORM.git
 cd QtMyBatisORM
 
 # 创建构建目录
@@ -500,5 +500,5 @@ QVariantList results = session->selectList("SELECT * FROM users WHERE age > :age
 
 ## 联系方式
 
-- 项目链接: [https://github.com/yourusername/QtMyBatisORM](https://github.com/yourusername/QtMyBatisORM)
-- 问题反馈: [Issues](https://github.com/yourusername/QtMyBatisORM/issues)
+- 项目链接: [https://github.com/yixinshark/QtMyBatisORM](https://github.com/yixinshark/QtMyBatisORM)
+- 问题反馈: [Issues](https://github.com/yixinshark/QtMyBatisORM/issues)
