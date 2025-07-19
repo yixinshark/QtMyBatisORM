@@ -38,16 +38,15 @@ MapperConfig XMLMapperParser::parseMapper(const QString& resourcePath)
     QString xmlContent = readResourceFile(resourcePath);
     
     QDomDocument doc;
-    QString errorMsg;
-    int errorLine, errorColumn;
     
-    if (!doc.setContent(xmlContent, &errorMsg, &errorLine, &errorColumn)) {
+    auto parseResult = doc.setContent(xmlContent);
+    if (!parseResult) {
         throw ConfigurationException(
             QStringLiteral("XML parse error in %1 at line %2, column %3: %4")
             .arg(resourcePath)
-            .arg(errorLine)
-            .arg(errorColumn)
-            .arg(errorMsg)
+            .arg(parseResult.errorLine)
+            .arg(parseResult.errorColumn)
+            .arg(parseResult.errorMessage)
         );
     }
     

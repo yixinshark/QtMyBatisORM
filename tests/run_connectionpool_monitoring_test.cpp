@@ -321,6 +321,9 @@ void TestConnectionPoolMonitoring::testConnectionFailureStats()
         exceptionThrown = true;
     }
     
+    // 验证异常确实被抛出
+    QVERIFY(exceptionThrown);
+    
     // 验证失败统计增加
     stats = pool.getStats();
     QVERIFY(stats.connectionFailures > 0);

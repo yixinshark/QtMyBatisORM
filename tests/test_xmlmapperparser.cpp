@@ -78,12 +78,11 @@ void TestXMLMapperParser::testParseMalformedXML()
     </select>)";
     
     QDomDocument doc;
-    QString errorMsg;
-    int errorLine, errorColumn;
     
     // 验证XML格式错误能被检测到
-    QVERIFY(!doc.setContent(malformedXml, &errorMsg, &errorLine, &errorColumn));
-    QVERIFY(!errorMsg.isEmpty());
+    auto parseResult = doc.setContent(malformedXml);
+    QVERIFY(!parseResult);
+    QVERIFY(!parseResult.errorMessage.isEmpty());
 }
 
 void TestXMLMapperParser::testParseMultipleMappers()
