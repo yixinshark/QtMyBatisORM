@@ -58,6 +58,9 @@ private:
     // 获取处理后的SQL语句，优先从缓存中获取
     QString getProcessedSql(const QString& sql, const QVariantMap& parameters);
     
+    // 使用对象池或回退策略绑定参数
+    void withParameterHandler(QSqlQuery &query, const QVariantMap &parameters);
+    
     QSharedPointer<QSqlDatabase> m_connection;
     QSharedPointer<StatementHandler> m_statementHandler;
     QSharedPointer<ParameterHandler> m_parameterHandler;

@@ -16,7 +16,7 @@
 namespace QtMyBatisORM {
 
 // 参数处理器对象池
-static ObjectPool<ParameterHandler> g_parameterHandlerPool(20, 200);
+static ObjectPool<ParameterHandler> g_parameterHandlerPool(10, 20);
 
 Executor::Executor(QSharedPointer<QSqlDatabase> connection, 
                   QSharedPointer<CacheManager> cacheManager,
@@ -139,13 +139,13 @@ QVariant Executor::queryInternal(const QString& sql, const QVariantMap& paramete
     
     try {
         // 使用优化的方法获取处理后的SQL
-        QString processedSql = getProcessedSql(sql, parameters);
+        const QString processedSql = getProcessedSql(sql, parameters);
         
         // 准备查询
         QSqlQuery query = m_statementHandler->prepare(processedSql, *m_connection);
         
-        // 绑定参数
-        m_parameterHandler->setParameters(query, parameters);
+        // 使用对象池或回退策略绑定参数
+        withParameterHandler(query, parameters);
         
         // 执行查询
         if (!query.exec()) {
@@ -194,13 +194,13 @@ QVariantList Executor::queryListInternal(const QString& sql, const QVariantMap& 
     
     try {
         // 使用优化的方法获取处理后的SQL
-        QString processedSql = getProcessedSql(sql, parameters);
+        const QString processedSql = getProcessedSql(sql, parameters);
         
         // 准备查询
         QSqlQuery query = m_statementHandler->prepare(processedSql, *m_connection);
         
-        // 绑定参数
-        m_parameterHandler->setParameters(query, parameters);
+        // 使用对象池或回退策略绑定参数
+        withParameterHandler(query, parameters);
         
         // 执行查询
         if (!query.exec()) {
@@ -240,13 +240,13 @@ int Executor::updateInternal(const QString& sql, const QVariantMap& parameters,
     
     try {
         // 使用优化的方法获取处理后的SQL
-        QString processedSql = getProcessedSql(sql, parameters);
+        const QString processedSql = getProcessedSql(sql, parameters);
         
         // 准备查询
         QSqlQuery query = m_statementHandler->prepare(processedSql, *m_connection);
         
-        // 绑定参数
-        m_parameterHandler->setParameters(query, parameters);
+        // 使用对象池或回退策略绑定参数
+        withParameterHandler(query, parameters);
         
         // 执行更新操作
         if (!query.exec()) {
@@ -519,6 +519,20 @@ QString Executor::getProcessedSql(const QString& sql, const QVariantMap& paramet
     
     // 对于带参数的动态SQL，不缓存直接处理
     return m_statementHandler->processSql(sql, parameters);
+}
+
+void Executor::withParameterHandler(QSqlQuery &query, const QVariantMap &parameters)
+ {
+    // 从对象池获取参数处理器并绑定参数
+    ParameterHandler* paramHandler = g_parameterHandlerPool.acquire();
+    if (paramHandler) {
+        // 使用对象池中的处理器
+        paramHandler->setParameters(query, parameters);
+        g_parameterHandlerPool.release(paramHandler);
+    } else {
+        // 如果对象池已满，回退到成员变量
+        m_parameterHandler->setParameters(query, parameters);
+    }
 }
 
 } // namespace QtMyBatisORM

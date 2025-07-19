@@ -23,6 +23,7 @@ public:
     QDateTime timestamp() const;
     
     // 添加上下文信息
+    void setContext(const QVariantMap &context);
     void setContext(const QString& key, const QVariant& value);
     QVariant getContext(const QString& key) const;
     QVariantMap getAllContext() const;

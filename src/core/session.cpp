@@ -50,21 +50,25 @@ QVariant Session::selectOne(const QString& statementId, const QVariantMap& param
             QLatin1String("Failed to execute selectOne: %1") +(e.message()),
             "SESSION_SELECT_ONE_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("selectOne"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("selectOne");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in selectOne: %1") +(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("selectOne"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("selectOne");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -86,21 +90,26 @@ QVariantList Session::selectList(const QString& statementId, const QVariantMap& 
             QLatin1String("Failed to execute selectList: %1") +(e.message()),
             "SESSION_SELECT_LIST_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("selectList"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("selectList");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in selectList: %1") +(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("selectList"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("selectList");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -122,21 +131,25 @@ int Session::insert(const QString& statementId, const QVariantMap& parameters)
             QLatin1String("Failed to execute insert: %1") +(e.message()),
             "SESSION_INSERT_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("insert"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("insert");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in insert: %1") +(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("insert"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("insert");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -158,21 +171,25 @@ int Session::update(const QString& statementId, const QVariantMap& parameters)
             QLatin1String("Failed to execute update: %1") +(e.message()),
             "SESSION_UPDATE_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("update"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("update");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in update: %1") +(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("update"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("update");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -194,21 +211,25 @@ int Session::remove(const QString& statementId, const QVariantMap& parameters)
             QLatin1String("Failed to execute remove: %1") +(e.message()),
             "SESSION_REMOVE_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("remove"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("remove");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in remove: %1") +(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("remove"));
-        ex.setContext(QStringLiteral("statementId"), statementId);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("remove");
+        context[QStringLiteral("statementId")] = statementId;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -229,21 +250,25 @@ int Session::execute(const QString& sql, const QVariantMap& parameters)
             QLatin1String("Failed to execute SQL: %1") + e.message(),
             "SESSION_EXECUTE_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("execute"));
-        ex.setContext(QStringLiteral("sql"), sql);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("execute");
+        context[QStringLiteral("sql")] = sql;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         SessionException ex(
             QLatin1String("Unexpected error in execute: %1") + QString::fromUtf8(e.what()),
             "SESSION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("execute"));
-        ex.setContext(QStringLiteral("sql"), sql);
-        ex.setContext(QStringLiteral("parameters"), parameters);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("execute");
+        context[QStringLiteral("sql")] = sql;
+        context[QStringLiteral("parameters")] = parameters;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -278,9 +303,11 @@ void Session::beginTransaction(int timeoutSeconds)
                 QLatin1String("Failed to begin transaction: %1") +(m_connection->lastError().text()),
                 "TRANSACTION_BEGIN_FAILED"
             );
-            ex.setContext(QStringLiteral("sqlError"), m_connection->lastError().text());
-            ex.setContext(QStringLiteral("sqlErrorType"), m_connection->lastError().type());
-            ex.setContext(QStringLiteral("timeoutSeconds"), timeoutSeconds);
+            QVariantMap context;
+            context[QStringLiteral("sqlError")] = m_connection->lastError().text();
+            context[QStringLiteral("sqlErrorType")] = m_connection->lastError().type();
+            context[QStringLiteral("timeoutSeconds")] = timeoutSeconds;
+            ex.setContext(context);
             throw ex;
         }
         
@@ -305,19 +332,23 @@ void Session::beginTransaction(int timeoutSeconds)
             QLatin1String("Failed to begin transaction: %1") +(e.message()),
             "TRANSACTION_BEGIN_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("beginTransaction"));
-        ex.setContext(QStringLiteral("timeoutSeconds"), timeoutSeconds);
-        ex.setContext(QStringLiteral("originalError"), e.message());
-        ex.setContext(QStringLiteral("originalCode"), e.code());
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("beginTransaction");
+        context[QStringLiteral("timeoutSeconds")] = timeoutSeconds;
+        context[QStringLiteral("originalError")] = e.message();
+        context[QStringLiteral("originalCode")] = e.code();
+        ex.setContext(context);
         throw ex;
     } catch (const std::exception& e) {
         TransactionException ex(
             QLatin1String("Unexpected error beginning transaction: %1") +(e.what()),
             "TRANSACTION_UNEXPECTED_ERROR"
         );
-        ex.setContext(QLatin1String("operation"), QLatin1String("beginTransaction"));
-        ex.setContext(QStringLiteral("timeoutSeconds"), timeoutSeconds);
-        ex.setContext(QLatin1String("stdError"), QString::fromUtf8(e.what()));
+        QVariantMap context;
+        context[QLatin1String("operation")] = QLatin1String("beginTransaction");
+        context[QStringLiteral("timeoutSeconds")] = timeoutSeconds;
+        context[QLatin1String("stdError")] = QString::fromUtf8(e.what());
+        ex.setContext(context);
         throw ex;
     }
 }
@@ -360,10 +391,12 @@ void Session::commit()
                 QLatin1String("Failed to commit transaction: %1") +(m_connection->lastError().text()),
                 "TRANSACTION_COMMIT_FAILED"
             );
-            ex.setContext(QStringLiteral("sqlError"), m_connection->lastError().text());
-            ex.setContext(QStringLiteral("sqlErrorType"), m_connection->lastError().type());
-            ex.setContext(QStringLiteral("failedSavepoints"), failedSavepoints);
-            ex.setContext(QStringLiteral("transactionDuration"), m_transactionStartTime.secsTo(QDateTime::currentDateTime()));
+            QVariantMap context;
+            context[QStringLiteral("sqlError")] = m_connection->lastError().text();
+            context[QStringLiteral("sqlErrorType")] = m_connection->lastError().type();
+            context[QStringLiteral("failedSavepoints")] = failedSavepoints;
+            context[QStringLiteral("transactionDuration")] = m_transactionStartTime.secsTo(QDateTime::currentDateTime());
+            ex.setContext(context);
             throw ex;
         }
         

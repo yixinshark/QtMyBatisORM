@@ -32,6 +32,11 @@ QDateTime QtMyBatisException::timestamp() const
     return m_timestamp;
 }
 
+void QtMyBatisException::setContext(const QVariantMap &context)
+{
+    m_context = context;
+}
+
 void QtMyBatisException::setContext(const QString& key, const QVariant& value)
 {
     m_context[key] = value;
@@ -56,6 +61,8 @@ QString QtMyBatisException::fullMessage() const
     if (!m_context.isEmpty()) {
         full += QStringLiteral(" (Context: ");
         QStringList contextItems;
+        contextItems.reserve(m_context.size()); // 预分配空间
+        
         for (auto it = m_context.begin(); it != m_context.end(); ++it) {
             contextItems << QStringLiteral("%1=%2").arg(it.key(), it.value().toString());
         }

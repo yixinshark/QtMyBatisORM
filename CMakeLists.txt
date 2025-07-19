@@ -33,7 +33,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Platform-specific settings
+# Platform-specific settings and compiler optimizations
 if(WIN32)
     # Windows-specific settings
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -41,13 +41,38 @@ if(WIN32)
     if(MSVC)
         # MSVC-specific settings
         add_compile_options(/W4 /MP)
+        # Release optimizations for MSVC
+        if(CMAKE_BUILD_TYPE STREQUAL "Release")
+            add_compile_options(/Ox /Ob2 /Ot)
+        endif()
     endif()
 elseif(APPLE)
     # macOS-specific settings
     set(CMAKE_MACOSX_RPATH ON)
+    add_compile_options(-Wall -Wextra)
+    # Release optimizations for Apple Clang
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_compile_options(-O3 -DNDEBUG)
+    endif()
 elseif(UNIX AND NOT APPLE)
     # Linux-specific settings
     add_compile_options(-Wall -Wextra)
+    # Release optimizations for GCC/Clang
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_compile_options(-O2 -DNDEBUG -march=native)
+    endif()
+    # Debug information
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-g -O0)
+    endif()
+endif()
+
+# Find Qt6 components with detailed configuration and error handling
+find_package(Qt6 6.0 REQUIRED COMPONENTS Core Sql Xml)
+
+# Verify Qt6 installation
+if(NOT Qt6_FOUND)
+    message(FATAL_ERROR "Qt6 not found. Please ensure Qt6 is installed and CMAKE_PREFIX_PATH is set correctly.")
 endif()
 
 # Find Qt6 components with detailed configuration
