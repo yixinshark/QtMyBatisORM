@@ -1,6 +1,6 @@
 #include <QtTest>
 #include "QtMyBatisORM/configurationmanager.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
 
 using namespace QtMyBatisORM;

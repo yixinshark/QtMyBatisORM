@@ -116,6 +116,7 @@ set(SOURCES
     src/config/jsonconfigparser.cpp
     src/config/xmlmapperparser.cpp
     src/exception/qtmybatisexception.cpp
+    src/helper/qtmybatishelper.cpp
     src/qtmybatisorm.cpp
 )
 
@@ -140,7 +141,8 @@ set(HEADERS
     include/QtMyBatisORM/xmlmapperparser.h
     include/QtMyBatisORM/qtmybatisexception.h
     include/QtMyBatisORM/objectpool.h
-    include/QtMyBatisORM/DataModels.h
+    include/QtMyBatisORM/datamodels.h
+    include/QtMyBatisORM/qtmybatishelper.h
     include/QtMyBatisORM/qtmybatisorm.h
 )
 

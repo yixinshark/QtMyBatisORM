@@ -1,5 +1,5 @@
 #include <QtTest>
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 
 using namespace QtMyBatisORM;
 

@@ -15,7 +15,7 @@
 #include "QtMyBatisORM/cachemanager.h"
 #include "QtMyBatisORM/mapperproxy.h"
 #include "QtMyBatisORM/mapperregistry.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 
 using namespace QtMyBatisORM;
 

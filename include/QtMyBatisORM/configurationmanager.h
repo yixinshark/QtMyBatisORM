@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QMutex>
-#include "DataModels.h"
+#include "datamodels.h"
 #include "export.h"
 
 namespace QtMyBatisORM {

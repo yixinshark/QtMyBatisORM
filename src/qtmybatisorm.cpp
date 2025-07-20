@@ -143,6 +143,45 @@ QSharedPointer<QtMyBatisORM> QtMyBatisORM::createWithConfig(const DatabaseConfig
     return nullptr;
 }
 
+QSharedPointer<QtMyBatisORM> QtMyBatisORM::createFromResource(const QString& configResourcePath)
+{
+    try {
+        QSharedPointer<QtMyBatisORM> instance = QSharedPointer<QtMyBatisORM>::create();
+        
+        // 从资源文件加载配置
+        instance->loadConfiguration(configResourcePath);
+        
+        // 从配置中获取SQL文件列表并自动加载
+        if (!instance->m_config.sqlFiles.isEmpty()) {
+            instance->loadMappers(instance->m_config.sqlFiles);
+        }
+        
+        // 创建SessionFactory
+        instance->m_sessionFactory = SessionFactory::create(instance->m_config);
+        instance->m_initialized = true;
+        
+        qDebug() << "QtMyBatisORM created from resource:" << configResourcePath;
+        if (!instance->m_config.sqlFiles.isEmpty()) {
+            qDebug() << "Auto-loaded SQL files:" << instance->m_config.sqlFiles;
+        }
+        
+        return instance;
+        
+    } catch (const QtMyBatisException& e) {
+        qWarning("Failed to create QtMyBatisORM from resource %s: %s", 
+                 qPrintable(configResourcePath), qPrintable(e.message()));
+        return nullptr;
+    } catch (const std::exception& e) {
+        qWarning("Failed to create QtMyBatisORM from resource %s: %s", 
+                 qPrintable(configResourcePath), e.what());
+        return nullptr;
+    } catch (...) {
+        qWarning("Failed to create QtMyBatisORM from resource %s: Unknown error", 
+                 qPrintable(configResourcePath));
+        return nullptr;
+    }
+}
+
 void QtMyBatisORM::loadConfiguration(const QString& configPath)
 {
     ConfigurationManager* configMgr = ConfigurationManager::instance();

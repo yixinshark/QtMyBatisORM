@@ -68,6 +68,10 @@ public:
     void close();
     bool isClosed() const;
     
+    // 调试功能
+    void setDebugMode(bool enabled);
+    bool isDebugMode() const;
+    
 private slots:
     void onTransactionTimeout();
     

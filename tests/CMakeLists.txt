@@ -28,6 +28,16 @@ set(SIMPLE_TEST_SOURCES
 
 add_executable(QtMyBatisORMTests ${SIMPLE_TEST_SOURCES})
 
+# Create separate test executables for new functionality
+add_executable(QtMyBatisHelperTest test_qtmybatishelper.cpp)
+target_link_libraries(QtMyBatisHelperTest ${TEST_DEPENDENCIES})
+
+add_executable(NewConfigFormatTest test_new_config_format.cpp)
+target_link_libraries(NewConfigFormatTest ${TEST_DEPENDENCIES})
+
+add_executable(SimpleHelperTest test_simple_helper.cpp)
+target_link_libraries(SimpleHelperTest ${TEST_DEPENDENCIES})
+
 target_include_directories(QtMyBatisORMTests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../include

@@ -22,9 +22,13 @@ void ParameterHandler::setParameters(QSqlQuery& query, const QVariantMap& parame
             throw MappingException(QStringLiteral("Query SQL is empty, cannot bind parameters"));
         }
         
-        if (sql.contains(QRegularExpression(QStringLiteral(R"(:\w+)")))) {
+        QRegularExpression namedParamRegex(QStringLiteral(R"(:\w+)"));
+        bool hasNamedParams = sql.contains(namedParamRegex);
+        bool hasPositionalParams = sql.contains(QStringLiteral("?"));
+        
+        if (hasNamedParams) {
             bindByName(query, parameters);
-        } else if (sql.contains(QStringLiteral("?"))) {
+        } else if (hasPositionalParams) {
             bindByIndex(query, parameters);
         } else if (!parameters.isEmpty()) {
             // SQL中没有参数占位符但提供了参数，记录警告

@@ -7,7 +7,7 @@
 #include <QWaitCondition>
 #include <QElapsedTimer>
 #include "QtMyBatisORM/connectionpool.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
 
 using namespace QtMyBatisORM;

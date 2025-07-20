@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QSet>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

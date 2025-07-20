@@ -12,22 +12,30 @@ namespace QtMyBatisORM {
  */
 struct DatabaseConfig
 {
-    QString driverName;     // QMYSQL, QSQLITE
-    QString hostName;
+    // 基本数据库配置
+    QString driverName;     // QMYSQL, QSQLITE (JSON: type)
+    QString hostName;       // JSON: host
     int port = 3306;
-    QString databaseName;
-    QString userName;
+    QString databaseName;   // JSON: database_name
+    QString userName;       // JSON: username
     QString password;
     
-    // 连接池配置
-    int maxConnections = 10;
-    int minConnections = 2;
-    int maxIdleTime = 300;  // 秒
+    // 调试配置
+    bool debug = false;     // 是否开启SQL调试日志
     
-    // 缓存配置
+    // 连接池配置
+    int maxConnections = 10;        // JSON: max_connection_count
+    int minConnections = 2;         // 固定值
+    int maxIdleTime = 300;          // 固定值（秒）
+    int maxWaitTime = 5000;         // JSON: max_wait_time（毫秒）
+    
+    // 缓存配置（固定值，简化配置）
     bool cacheEnabled = true;
     int maxCacheSize = 1000;
-    int cacheExpireTime = 600;  // 秒
+    int cacheExpireTime = 600;      // 秒
+    
+    // SQL文件列表
+    QStringList sqlFiles;           // JSON: sql_files
 };
 
 /**

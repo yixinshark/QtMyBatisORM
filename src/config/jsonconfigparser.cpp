@@ -2,6 +2,7 @@
 #include "QtMyBatisORM/qtmybatisexception.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonParseError>
 #include <QFile>
 #include <QResource>
@@ -47,49 +48,46 @@ DatabaseConfig JSONConfigParser::parseFromJsonObject(const QJsonObject& jsonObj)
 {
     DatabaseConfig config;
     
+    // 新格式要求包含database对象
+    if (!jsonObj.contains(QStringLiteral("database"))) {
+        throw ConfigurationException(QStringLiteral("JSON configuration must contain 'database' object"));
+    }
+    
+    QJsonObject dbConfig = jsonObj.value(QStringLiteral("database")).toObject();
+    if (dbConfig.isEmpty()) {
+        throw ConfigurationException(QStringLiteral("Database configuration object cannot be empty"));
+    }
+    
     // 解析数据库驱动配置
-    config.driverName = jsonObj.value(QStringLiteral("driverName")).toString(
-        jsonObj.value(QStringLiteral("driver")).toString(QStringLiteral("QSQLITE"))
-    );
-    config.hostName = jsonObj.value(QStringLiteral("hostName")).toString(
-        jsonObj.value(QStringLiteral("host")).toString(QStringLiteral("localhost"))
-    );
-    config.port = jsonObj.value(QStringLiteral("port")).toInt(3306);
-    config.databaseName = jsonObj.value(QStringLiteral("databaseName")).toString(
-        jsonObj.value(QStringLiteral("database")).toString()
-    );
-    config.userName = jsonObj.value(QStringLiteral("userName")).toString(
-        jsonObj.value(QStringLiteral("username")).toString()
-    );
-    config.password = jsonObj.value(QStringLiteral("password")).toString();
+    config.driverName = dbConfig.value(QStringLiteral("type")).toString(QStringLiteral("QSQLITE"));
+    config.hostName = dbConfig.value(QStringLiteral("host")).toString(QStringLiteral("localhost"));
+    config.port = dbConfig.value(QStringLiteral("port")).toInt(3306);
+    config.databaseName = dbConfig.value(QStringLiteral("database_name")).toString();
+    config.userName = dbConfig.value(QStringLiteral("username")).toString();
+    config.password = dbConfig.value(QStringLiteral("password")).toString();
+    
+    // 解析调试配置
+    config.debug = dbConfig.value(QStringLiteral("debug")).toBool(false);
     
     // 解析连接池配置
-    QJsonObject poolConfig = jsonObj.value(QStringLiteral("connectionPool")).toObject();
-    if (poolConfig.isEmpty()) {
-        // 使用顶层配置作为回退
-        config.maxConnections = jsonObj.value(QStringLiteral("maxConnections")).toInt(10);
-        config.minConnections = jsonObj.value(QStringLiteral("minConnections")).toInt(2);
-        config.maxIdleTime = jsonObj.value(QStringLiteral("maxIdleTime")).toInt(300);
-    } else {
-        // 使用连接池对象中的配置
-        config.maxConnections = poolConfig.value(QStringLiteral("maxConnections")).toInt(10);
-        config.minConnections = poolConfig.value(QStringLiteral("minConnections")).toInt(2);
-        config.maxIdleTime = poolConfig.value(QStringLiteral("maxIdleTime")).toInt(300);
+    config.maxConnections = dbConfig.value(QStringLiteral("max_connection_count")).toInt(10);
+    config.minConnections = 2; // 固定值，简化配置
+    config.maxWaitTime = dbConfig.value(QStringLiteral("max_wait_time")).toInt(5000);
+    config.maxIdleTime = 300; // 固定值，简化配置
+    
+    // 解析SQL文件列表
+    QJsonArray sqlFilesArray = dbConfig.value(QStringLiteral("sql_files")).toArray();
+    for (const QJsonValue& value : sqlFilesArray) {
+        QString sqlFile = value.toString();
+        if (!sqlFile.isEmpty()) {
+            config.sqlFiles.append(sqlFile);
+        }
     }
     
-    // 解析缓存配置
-    QJsonObject cacheConfig = jsonObj.value(QStringLiteral("cache")).toObject();
-    if (cacheConfig.isEmpty()) {
-        // 使用顶层配置作为回退
-        config.cacheEnabled = jsonObj.value(QStringLiteral("cacheEnabled")).toBool(true);
-        config.maxCacheSize = jsonObj.value(QStringLiteral("maxCacheSize")).toInt(1000);
-        config.cacheExpireTime = jsonObj.value(QStringLiteral("cacheExpireTime")).toInt(600);
-    } else {
-        // 使用缓存对象中的配置
-        config.cacheEnabled = cacheConfig.value(QStringLiteral("enabled")).toBool(true);
-        config.maxCacheSize = cacheConfig.value(QStringLiteral("maxSize")).toInt(1000);
-        config.cacheExpireTime = cacheConfig.value(QStringLiteral("expireTime")).toInt(600);
-    }
+    // 缓存配置使用默认值，简化配置
+    config.cacheEnabled = true;
+    config.maxCacheSize = 1000;
+    config.cacheExpireTime = 600;
     
     return config;
 }

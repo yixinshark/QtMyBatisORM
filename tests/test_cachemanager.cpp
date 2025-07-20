@@ -1,6 +1,6 @@
 #include <QtTest>
 #include "QtMyBatisORM/cachemanager.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 
 using namespace QtMyBatisORM;
 

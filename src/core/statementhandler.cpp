@@ -1,7 +1,9 @@
 #include "QtMyBatisORM/statementhandler.h"
 #include "QtMyBatisORM/dynamicsqlprocessor.h"
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QRegularExpression>
+#include <QDebug>
 
 namespace QtMyBatisORM {
 
@@ -14,7 +16,10 @@ StatementHandler::StatementHandler(QObject* parent)
 QSqlQuery StatementHandler::prepare(const QString& sql, QSqlDatabase& db)
 {
     QSqlQuery query(db);
-    query.prepare(sql);
+    bool prepareResult = query.prepare(sql);
+    if (!prepareResult) {
+        qWarning() << "Failed to prepare SQL:" << sql << "-" << query.lastError().text();
+    }
     return query;
 }
 

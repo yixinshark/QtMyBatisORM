@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <!-- 数据库配置文件 -->
+        <file>config/database.json</file>
+        
+        <!-- SQL映射文件 -->
+        <file>sql/student.sql</file>
+        <file>sql/course.sql</file>
+        <file>sql/enrollment.sql</file>
+        <file>sql/init.sql</file>
+    </qresource>
+</RCC> 

@@ -13,7 +13,7 @@
 #include <QStringList>
 #include "sessionfactory.h"
 #include "session.h"
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 
@@ -54,6 +54,9 @@ public:
                                               const QStringList& mapperPaths = {});
     static QSharedPointer<QtMyBatisORM> createWithConfig(const DatabaseConfig& config,
                                                         const QStringList& mapperPaths = {});
+    
+    // 新增：一站式初始化方法，从资源文件自动加载配置和SQL文件
+    static QSharedPointer<QtMyBatisORM> createFromResource(const QString& configResourcePath);
     
     // 快速创建方法 - 使用默认配置
     static QSharedPointer<QtMyBatisORM> createDefault();

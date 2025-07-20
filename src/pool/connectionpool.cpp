@@ -227,6 +227,7 @@ void ConnectionPool::close()
         ConnectionInfo connInfo = m_availableConnections.dequeue();
         QSharedPointer<QSqlDatabase> conn = connInfo.connection;
         if (conn && conn->isOpen()) {
+            qDebug() << "close connection:" << conn->connectionName() << conn.data();
             conn->close();
         }
     }
@@ -338,8 +339,9 @@ QSharedPointer<QSqlDatabase> ConnectionPool::createConnection()
             if (db && db->isOpen()) {
                 db->close();
             }
-            QSqlDatabase::removeDatabase(connectionName);
             delete db;
+            qDebug() << "remove database connection:" << connectionName;
+            QSqlDatabase::removeDatabase(connectionName);
         });
     
     return dbPtr;

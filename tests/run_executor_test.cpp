@@ -7,7 +7,7 @@
 #include "QtMyBatisORM/executor.h"
 #include "QtMyBatisORM/cachemanager.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 
 using namespace QtMyBatisORM;
 

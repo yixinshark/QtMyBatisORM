@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QVariant>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

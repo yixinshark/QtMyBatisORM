@@ -36,8 +36,15 @@ QVariant ResultHandler::handleSingleResult(QSqlQuery& query)
         }
         
         QSqlRecord record = query.record();
-        QVariantMap resultMap;
         
+        // 对于单列查询（通常是标量值，如COUNT、MAX、MIN等），直接返回值
+        if (record.count() == 1) {
+            QVariant fieldValue = normalizeValue(query.value(0));
+            return fieldValue;
+        }
+        
+        // 对于多列查询，返回QVariantMap
+        QVariantMap resultMap;
         for (int i = 0; i < record.count(); ++i) {
             QString fieldName = record.fieldName(i);
             QVariant fieldValue = normalizeValue(query.value(i));

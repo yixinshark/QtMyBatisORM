@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QtMyBatisORM/qtmybatisorm.h>
 #include <QtMyBatisORM/session.h>
-#include <QtMyBatisORM/DataModels.h>
+#include <QtMyBatisORM/datamodels.h>
 
 // 定义一个简单的用户类
 class User {

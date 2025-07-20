@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <QJsonObject>
-#include "DataModels.h"
+#include "datamodels.h"
 #include "export.h"
 
 namespace QtMyBatisORM {

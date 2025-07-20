@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <QDomDocument>
 #include <QDomElement>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

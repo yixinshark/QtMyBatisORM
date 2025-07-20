@@ -339,11 +339,17 @@ Example configuration:
 
 ```json
 {
-    "driverName": "QSQLITE",
-    "databaseName": "database.db",
-    "cacheEnabled": true,
-    "maxCacheSize": 1000,
-    "cacheExpireTime": 300
+    "database": {
+        "type": "QSQLITE",
+        "database_name": "database.db",
+        "cache_enabled": true,
+        "max_cache_size": 1000,
+        "cache_expire_time": 300,
+        "max_connection_count": 5,
+        "min_connection_count": 2,
+        "max_idle_time": 300,
+        "sql_files": []
+    }
 }
 ```
 

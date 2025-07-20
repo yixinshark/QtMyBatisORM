@@ -9,7 +9,7 @@
 #include <QSharedPointer>
 #include <QDateTime>
 #include <QHash>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

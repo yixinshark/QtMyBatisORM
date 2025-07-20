@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QRegularExpression>
+#include <QElapsedTimer>
 
 namespace QtMyBatisORM {
 
@@ -24,6 +25,7 @@ Executor::Executor(QSharedPointer<QSqlDatabase> connection,
     : QObject(parent)
     , m_connection(connection)
     , m_cacheManager(cacheManager)
+    , m_debugMode(false)
 {
     m_statementHandler = QSharedPointer<StatementHandler>::create();
     m_parameterHandler = QSharedPointer<ParameterHandler>::create();
@@ -128,11 +130,18 @@ QVariant Executor::queryInternal(const QString& sql, const QVariantMap& paramete
         throw ConnectionException(QStringLiteral("Database connection is not available"));
     }
     
+    QElapsedTimer timer;
+    timer.start();
+    
     // 如果启用缓存且有缓存管理器，尝试从缓存获取
     if (useCache && m_cacheManager && !statementId.isEmpty()) {
         QString cacheKey = generateCacheKey(statementId, parameters);
         QVariant cachedResult = m_cacheManager->get(cacheKey);
         if (!cachedResult.isNull()) {
+            if (m_debugMode) {
+                logDebugInfo("selectOne (缓存命中)", statementId.isEmpty() ? sql : statementId, 
+                            parameters, timer.elapsed(), cachedResult);
+            }
             return cachedResult;
         }
     }
@@ -158,6 +167,12 @@ QVariant Executor::queryInternal(const QString& sql, const QVariantMap& paramete
         
         // 处理结果
         QVariant result = m_resultHandler->handleSingleResult(query);
+        
+        // 记录调试日志
+        if (m_debugMode) {
+            logDebugInfo("selectOne", statementId.isEmpty() ? processedSql : statementId, 
+                        parameters, timer.elapsed(), result);
+        }   
         
         // 如果启用缓存，将结果存入缓存
         if (useCache && m_cacheManager && !statementId.isEmpty() && !result.isNull()) {
@@ -249,7 +264,14 @@ int Executor::updateInternal(const QString& sql, const QVariantMap& parameters,
         withParameterHandler(query, parameters);
         
         // 执行更新操作
+        // Debug: Query execution
+        // qDebug() << "[Executor] SQL:" << query.lastQuery();
+        // qDebug() << "[Executor] Bound values:" << query.boundValues();
+        
         if (!query.exec()) {
+            // Debug: Query execution error
+            // qDebug() << "[Executor] Error:" << query.lastError().text();
+            
             throw SqlExecutionException(
                 QStringLiteral("Failed to execute update: %1. SQL: %2")
                 .arg(query.lastError().text())
@@ -533,6 +555,53 @@ void Executor::withParameterHandler(QSqlQuery &query, const QVariantMap &paramet
         // 如果对象池已满，回退到成员变量
         m_parameterHandler->setParameters(query, parameters);
     }
+}
+
+void Executor::setDebugMode(bool enabled)
+{
+    m_debugMode = enabled;
+}
+
+bool Executor::isDebugMode() const
+{
+    return m_debugMode;
+}
+
+void Executor::logDebugInfo(const QString& operation, const QString& sql, 
+                           const QVariantMap& parameters, qint64 elapsedMs, 
+                           const QVariant& result) const
+{
+    if (!m_debugMode) {
+        return;
+    }
+    
+    QString paramStr;
+    if (!parameters.isEmpty()) {
+        QStringList paramList;
+        for (auto it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
+            paramList << QString("%1=%2").arg(it.key()).arg(it.value().toString());
+        }
+        paramStr = QString(" 参数:[%1]").arg(paramList.join(", "));
+    }
+    
+    QString resultStr;
+    if (result.isValid()) {
+        if (result.canConvert<QVariantList>()) {
+            resultStr = QString(" 结果:[返回%1条记录]").arg(result.toList().size());
+        } else if (result.canConvert<QVariantMap>()) {
+            QVariantMap map = result.toMap();
+            resultStr = QString(" 结果:[对象包含%1个字段]").arg(map.size());
+        } else {
+            resultStr = QString(" 结果:[%1]").arg(result.toString());
+        }
+    }
+    
+    qDebug() << QString("[QtMyBatisORM DEBUG] %1: %2%3%4 耗时:%5ms")
+                .arg(operation)
+                .arg(sql)
+                .arg(paramStr)
+                .arg(resultStr)
+                .arg(elapsedMs);
 }
 
 } // namespace QtMyBatisORM

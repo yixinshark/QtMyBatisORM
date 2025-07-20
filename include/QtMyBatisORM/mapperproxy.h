@@ -9,7 +9,7 @@
 #include <QMetaMethod>
 #include <QGenericArgument>
 #include <QGenericReturnArgument>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

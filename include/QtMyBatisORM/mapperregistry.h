@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QString>
 #include <QSharedPointer>
-#include "DataModels.h"
+#include "datamodels.h"
 
 namespace QtMyBatisORM {
 

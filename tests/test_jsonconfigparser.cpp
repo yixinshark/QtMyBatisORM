@@ -3,7 +3,7 @@
 #include <QJsonObject>
 #include <QTemporaryFile>
 #include "QtMyBatisORM/jsonconfigparser.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
 
 using namespace QtMyBatisORM;

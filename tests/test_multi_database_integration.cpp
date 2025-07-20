@@ -11,7 +11,7 @@
 #include "QtMyBatisORM/session.h"
 #include "QtMyBatisORM/sessionfactory.h"
 #include "QtMyBatisORM/mapperregistry.h"
-#include "QtMyBatisORM/DataModels.h"
+#include "QtMyBatisORM/datamodels.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
 
 using namespace QtMyBatisORM;

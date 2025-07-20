@@ -47,7 +47,7 @@ QVariant Session::selectOne(const QString& statementId, const QVariantMap& param
     } catch (const QtMyBatisException& e) {
         // Wrap other exceptions as session exceptions
         SessionException ex(
-            QLatin1String("Failed to execute selectOne: %1") +(e.message()),
+            QStringLiteral("Failed to execute selectOne: %1").arg(e.message()),
             "SESSION_SELECT_ONE_ERROR"
         );
         QVariantMap context;
@@ -87,7 +87,7 @@ QVariantList Session::selectList(const QString& statementId, const QVariantMap& 
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute selectList: %1") +(e.message()),
+            QStringLiteral("Failed to execute selectList: %1").arg(e.message()),
             "SESSION_SELECT_LIST_ERROR"
         );
 
@@ -128,7 +128,7 @@ int Session::insert(const QString& statementId, const QVariantMap& parameters)
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute insert: %1") +(e.message()),
+            QStringLiteral("Failed to execute insert: %1").arg(e.message()),
             "SESSION_INSERT_ERROR"
         );
         QVariantMap context;
@@ -168,7 +168,7 @@ int Session::update(const QString& statementId, const QVariantMap& parameters)
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute update: %1") +(e.message()),
+            QStringLiteral("Failed to execute update: %1").arg(e.message()),
             "SESSION_UPDATE_ERROR"
         );
         QVariantMap context;
@@ -208,7 +208,7 @@ int Session::remove(const QString& statementId, const QVariantMap& parameters)
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute remove: %1") +(e.message()),
+            QStringLiteral("Failed to execute remove: %1").arg(e.message()),
             "SESSION_REMOVE_ERROR"
         );
         QVariantMap context;
@@ -247,7 +247,7 @@ int Session::execute(const QString& sql, const QVariantMap& parameters)
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute SQL: %1") + e.message(),
+            QStringLiteral("Failed to execute SQL: %1").arg(e.message()),
             "SESSION_EXECUTE_ERROR"
         );
         QVariantMap context;
@@ -510,6 +510,21 @@ void Session::close()
 bool Session::isClosed() const
 {
     return m_closed;
+}
+
+void Session::setDebugMode(bool enabled)
+{
+    if (m_executor) {
+        m_executor->setDebugMode(enabled);
+    }
+}
+
+bool Session::isDebugMode() const
+{
+    if (m_executor) {
+        return m_executor->isDebugMode();
+    }
+    return false;
 }
 
 QString Session::getStatementSql(const QString& statementId)
@@ -812,7 +827,7 @@ int Session::batchInsert(const QString& statementId, const QList<QVariantMap>& p
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute batch insert: %1") +(e.message()),
+            QStringLiteral("Failed to execute batch insert: %1").arg(e.message()),
             "SESSION_BATCH_INSERT_ERROR"
         );
         ex.setContext(QLatin1String("operation"), QLatin1String("batchInsert"));
@@ -873,7 +888,7 @@ int Session::batchUpdate(const QString& statementId, const QList<QVariantMap>& p
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute batch update: %1") +(e.message()),
+            QStringLiteral("Failed to execute batch update: %1").arg(e.message()),
             "SESSION_BATCH_UPDATE_ERROR"
         );
         ex.setContext(QLatin1String("operation"), QLatin1String("batchUpdate"));
@@ -934,7 +949,7 @@ int Session::batchRemove(const QString& statementId, const QList<QVariantMap>& p
         throw ex;
     } catch (const QtMyBatisException& e) {
         SessionException ex(
-            QLatin1String("Failed to execute batch remove: %1") +(e.message()),
+            QStringLiteral("Failed to execute batch remove: %1").arg(e.message()),
             "SESSION_BATCH_REMOVE_ERROR"
         );
         ex.setContext(QLatin1String("operation"), QLatin1String("batchRemove"));
