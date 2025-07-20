@@ -71,9 +71,14 @@ DatabaseConfig JSONConfigParser::parseFromJsonObject(const QJsonObject& jsonObj)
     
     // 解析连接池配置
     config.maxConnections = dbConfig.value(QStringLiteral("max_connection_count")).toInt(10);
-    config.minConnections = 2; // 固定值，简化配置
+    config.minConnections = dbConfig.value(QStringLiteral("min_connection_count")).toInt(2);
     config.maxWaitTime = dbConfig.value(QStringLiteral("max_wait_time")).toInt(5000);
-    config.maxIdleTime = 300; // 固定值，简化配置
+    config.maxIdleTime = dbConfig.value(QStringLiteral("max_idle_time")).toInt(300);
+
+    // 解析缓存配置
+    config.cacheEnabled = dbConfig.value(QStringLiteral("cache_enabled")).toBool(true);
+    config.maxCacheSize = dbConfig.value(QStringLiteral("max_cache_size")).toInt(1000);
+    config.cacheExpireTime = dbConfig.value(QStringLiteral("cache_expire_time")).toInt(600);
     
     // 解析SQL文件列表
     QJsonArray sqlFilesArray = dbConfig.value(QStringLiteral("sql_files")).toArray();
@@ -83,11 +88,6 @@ DatabaseConfig JSONConfigParser::parseFromJsonObject(const QJsonObject& jsonObj)
             config.sqlFiles.append(sqlFile);
         }
     }
-    
-    // 缓存配置使用默认值，简化配置
-    config.cacheEnabled = true;
-    config.maxCacheSize = 1000;
-    config.cacheExpireTime = 600;
     
     return config;
 }
