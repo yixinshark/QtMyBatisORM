@@ -9,7 +9,7 @@
 namespace QtMyBatisORM {
 
 /**
- * Qt-MyBatis-ORM基础异常类
+ * Qt-MyBatis-ORM base exception class
  */
 class QTMYBATISORM_EXPORT QtMyBatisException : public QException
 {
@@ -22,13 +22,13 @@ public:
     QString detail() const;
     QDateTime timestamp() const;
     
-    // 添加上下文信息
+    // Add context information
     void setContext(const QVariantMap &context);
     void setContext(const QString& key, const QVariant& value);
     QVariant getContext(const QString& key) const;
     QVariantMap getAllContext() const;
     
-    // 格式化完整错误信息
+    // Format complete error information
     QString fullMessage() const;
     
     // std::exception interface
@@ -48,7 +48,7 @@ protected:
 };
 
 /**
- * 配置异常
+ * Configuration exception
  */
 class ConfigurationException : public QtMyBatisException
 {
@@ -58,7 +58,7 @@ public:
 };
 
 /**
- * SQL执行异常
+ * SQL execution exception
  */
 class SqlExecutionException : public QtMyBatisException
 {
@@ -68,7 +68,7 @@ public:
 };
 
 /**
- * 连接异常
+ * Connection exception
  */
 class ConnectionException : public QtMyBatisException
 {
@@ -78,7 +78,7 @@ public:
 };
 
 /**
- * 映射异常
+ * Mapping exception
  */
 class MappingException : public QtMyBatisException
 {
@@ -88,7 +88,7 @@ public:
 };
 
 /**
- * 缓存异常
+ * Cache exception
  */
 class CacheException : public QtMyBatisException
 {
@@ -98,7 +98,7 @@ public:
 };
 
 /**
- * 事务异常
+ * Transaction exception
  */
 class TransactionException : public QtMyBatisException
 {
@@ -108,7 +108,7 @@ public:
 };
 
 /**
- * 参数异常
+ * Parameter exception
  */
 class ParameterException : public QtMyBatisException
 {
@@ -118,7 +118,7 @@ public:
 };
 
 /**
- * 结果处理异常
+ * Result handling exception
  */
 class ResultException : public QtMyBatisException
 {
@@ -128,7 +128,7 @@ public:
 };
 
 /**
- * 会话异常
+ * Session exception
  */
 class SessionException : public QtMyBatisException
 {

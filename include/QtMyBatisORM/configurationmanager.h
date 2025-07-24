@@ -14,7 +14,7 @@ class JSONConfigParser;
 class XMLMapperParser;
 
 /**
- * 配置管理器 - 单例模式
+ * Configuration Manager - Singleton Pattern
  */
 class QTMYBATISORM_EXPORT ConfigurationManager : public QObject
 {
@@ -33,7 +33,7 @@ public:
     bool hasMapper(const QString& namespace_) const;
     void reset();
     
-    // 便利方法
+    // Convenience methods
     bool isConfigured() const;
     int getMapperCount() const;
     QStringList getMapperNamespaces() const;

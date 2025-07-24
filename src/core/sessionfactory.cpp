@@ -1,5 +1,4 @@
 #include "QtMyBatisORM/sessionfactory.h"
-#include "QtMyBatisORM/sessionfactory_impl.h"
 #include "QtMyBatisORM/session.h"
 #include "QtMyBatisORM/connectionpool.h"
 #include "QtMyBatisORM/mapperregistry.h"

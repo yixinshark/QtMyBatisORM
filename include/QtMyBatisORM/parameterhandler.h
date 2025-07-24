@@ -9,7 +9,7 @@
 namespace QtMyBatisORM {
 
 /**
- * 参数处理器
+ * Parameter handler
  */
 class ParameterHandler : public QObject
 {
@@ -21,7 +21,7 @@ public:
     void setParameters(QSqlQuery& query, const QVariantMap& parameters);
     QVariant convertParameter(const QVariant& value, const QString& targetType = QLatin1String(""));
     
-    // 参数验证方法（公开用于测试和外部验证）
+    // Parameter validation methods (public for testing and external validation)
     bool isValidParameterName(const QString& name);
     
 private:

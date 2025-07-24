@@ -7,37 +7,34 @@
 namespace QtMyBatisORM {
 
 /**
- * @brief 通用对象池模板类
+ * @brief Generic object pool template class
  * 
- * 用于管理频繁创建和销毁的对象，减少内存分配开销
- * 
- * @tparam T 对象类型
+ * Used to manage frequently created and destroyed objects, reducing memory allocation overhead
+ * 通用对象池模板类;用于管理频繁创建和销毁的对象，减少内存分配开销
+ * @tparam T Object type
  */
 template<typename T>
 class ObjectPool
 {
 public:
     /**
-     * @brief 构造函数
-     * @param initialSize 初始对象数量
-     * @param maxSize 最大对象数量
+     * @brief Constructor
+     * @param initialSize Initial number of objects
+     * @param maxSize Maximum number of objects
      */
     ObjectPool(int initialSize = 10, int maxSize = 100)
         : m_maxSize(maxSize)
     {
-        // 预创建对象
+        // Pre-create objects
         for (int i = 0; i < initialSize; ++i) {
             m_availableObjects.push(new T());
         }
         m_totalCreated = initialSize;
     }
     
-    /**
-     * @brief 析构函数
-     */
     ~ObjectPool()
     {
-        // 清理所有对象
+        // Clean up all objects
         QMutexLocker locker(&m_mutex);
         while (!m_availableObjects.isEmpty()) {
             delete m_availableObjects.pop();
@@ -45,27 +42,27 @@ public:
     }
     
     /**
-     * @brief 获取一个对象
-     * @return 对象指针，如果池已满且无可用对象则返回nullptr
+     * @brief Acquire an object
+     * @return Object pointer, returns nullptr if pool is full and no available objects
      */
     T* acquire()
     {
         QMutexLocker locker(&m_mutex);
         if (m_availableObjects.isEmpty()) {
-            // 如果未达到最大数量，则创建新对象
+            // If maximum count not reached, create new object
             if (m_totalCreated < m_maxSize) {
                 m_totalCreated++;
                 return new T();
             }
-            // 已达到最大数量，返回nullptr
+            // Maximum count reached, return nullptr
             return nullptr;
         }
         return m_availableObjects.pop();
     }
     
     /**
-     * @brief 归还一个对象到池中
-     * @param object 要归还的对象指针
+     * @brief Return an object to the pool
+     * @param object Object pointer to return
      */
     void release(T* object)
     {
@@ -76,8 +73,8 @@ public:
     }
     
     /**
-     * @brief 获取当前可用对象数量
-     * @return 可用对象数量
+     * @brief Get current available object count
+     * @return Available object count
      */
     int availableCount() const
     {
@@ -86,8 +83,8 @@ public:
     }
     
     /**
-     * @brief 获取已创建的对象总数
-     * @return 已创建的对象总数
+     * @brief Get total number of created objects
+     * @return Total number of created objects
      */
     int totalCreated() const
     {

@@ -9,7 +9,7 @@
 namespace QtMyBatisORM {
 
 /**
- * JSON配置文件解析器
+ * JSON configuration file parser
  */
 class QTMYBATISORM_EXPORT JSONConfigParser : public QObject
 {

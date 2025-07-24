@@ -4,8 +4,8 @@
 #include "QtMyBatisORM/resulthandler.h"
 #include "QtMyBatisORM/cachemanager.h"
 #include "QtMyBatisORM/qtmybatisexception.h"
-#include "QtMyBatisORM/logger.h"
 #include "QtMyBatisORM/objectpool.h"
+
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QCryptographicHash>
@@ -64,7 +64,18 @@ QVariant Executor::queryWithCache(const QString& statementId, const QString& sql
     // 尝试从缓存获取结果
     QVariant cachedResult = m_cacheManager->get(cacheKey);
     if (!cachedResult.isNull()) {
+        // 记录缓存命中调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Cache hit - StatementId: %1, CacheKey: %2")
+                        .arg(statementId, cacheKey);
+        }
         return cachedResult;
+    }
+    
+    // 记录缓存未命中调试信息
+    if (m_debugMode) {
+        qDebug() << QString("[Cache] Cache miss - StatementId: %1, CacheKey: %2")
+                    .arg(statementId, cacheKey);
     }
     
     // 缓存中没有，执行查询
@@ -73,6 +84,11 @@ QVariant Executor::queryWithCache(const QString& statementId, const QString& sql
     // 将结果存入缓存
     if (!result.isNull()) {
         m_cacheManager->put(cacheKey, result);
+        // 记录缓存存储调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Cache stored - StatementId: %1, CacheKey: %2")
+                        .arg(statementId, cacheKey);
+        }
     }
     
     return result;
@@ -92,7 +108,18 @@ QVariantList Executor::queryListWithCache(const QString& statementId, const QStr
     // 尝试从缓存获取结果
     QVariant cachedResult = m_cacheManager->get(cacheKey);
     if (!cachedResult.isNull()) {
+        // 记录缓存命中调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Cache hit - StatementId: %1, CacheKey: %2")
+                        .arg(statementId, cacheKey);
+        }
         return cachedResult.toList();
+    }
+    
+    // 记录缓存未命中调试信息
+    if (m_debugMode) {
+        qDebug() << QString("[Cache] Cache miss - StatementId: %1, CacheKey: %2")
+                    .arg(statementId, cacheKey);
     }
     
     // 缓存中没有，执行查询
@@ -101,6 +128,11 @@ QVariantList Executor::queryListWithCache(const QString& statementId, const QStr
     // 将结果存入缓存
     if (!result.isEmpty()) {
         m_cacheManager->put(cacheKey, QVariant::fromValue(result));
+        // 记录缓存存储调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Cache stored - StatementId: %1, CacheKey: %2, Records: %3")
+                        .arg(statementId, cacheKey).arg(result.size());
+        }
     }
     
     return result;
@@ -117,8 +149,16 @@ void Executor::clearCache(const QString& pattern)
     if (m_cacheManager) {
         if (pattern.isEmpty()) {
             m_cacheManager->clear();
+            // 记录缓存清空调试信息
+            if (m_debugMode) {
+                qDebug() << "[Cache] Clear all cache";
+            }
         } else {
             m_cacheManager->invalidateByPattern(pattern);
+            // 记录缓存模式失效调试信息
+            if (m_debugMode) {
+                qDebug() << QString("[Cache] Invalidate cache by pattern - Pattern: %1").arg(pattern);
+            }
         }
     }
 }
@@ -139,7 +179,7 @@ QVariant Executor::queryInternal(const QString& sql, const QVariantMap& paramete
         QVariant cachedResult = m_cacheManager->get(cacheKey);
         if (!cachedResult.isNull()) {
             if (m_debugMode) {
-                logDebugInfo("selectOne (缓存命中)", statementId.isEmpty() ? sql : statementId, 
+                logDebugInfo("selectOne (Cache hit)", statementId.isEmpty() ? sql : statementId,
                             parameters, timer.elapsed(), cachedResult);
             }
             return cachedResult;
@@ -168,16 +208,21 @@ QVariant Executor::queryInternal(const QString& sql, const QVariantMap& paramete
         // 处理结果
         QVariant result = m_resultHandler->handleSingleResult(query);
         
-        // 记录调试日志
+        // 记录调试日志 - 使用完整的SQL执行流程跟踪
         if (m_debugMode) {
-            logDebugInfo("selectOne", statementId.isEmpty() ? processedSql : statementId, 
-                        parameters, timer.elapsed(), result);
+            logSqlExecutionFlow("selectOne", sql, parameters, query.lastQuery(), 
+                               timer.elapsed(), result);
         }   
         
         // 如果启用缓存，将结果存入缓存
         if (useCache && m_cacheManager && !statementId.isEmpty() && !result.isNull()) {
             QString cacheKey = generateCacheKey(statementId, parameters);
             m_cacheManager->put(cacheKey, result);
+            // 记录缓存存储调试信息
+            if (m_debugMode) {
+                qDebug() << QString("[Cache] Cache stored - StatementId: %1, CacheKey: %2")
+                            .arg(statementId, cacheKey);
+            }
         }
         
         return result;
@@ -198,11 +243,18 @@ QVariantList Executor::queryListInternal(const QString& sql, const QVariantMap& 
         throw ConnectionException(QStringLiteral("Database connection is not available"));
     }
     
+    QElapsedTimer timer;
+    timer.start();
+    
     // 如果启用缓存且有缓存管理器，尝试从缓存获取
     if (useCache && m_cacheManager && !statementId.isEmpty()) {
         QString cacheKey = generateCacheKey(statementId, parameters);
         QVariant cachedResult = m_cacheManager->get(cacheKey);
         if (!cachedResult.isNull()) {
+            if (m_debugMode) {
+                logSqlExecutionFlow("selectList (Cache hit)", sql, parameters, sql,
+                                   timer.elapsed(), QVariant::fromValue(cachedResult.toList()));
+            }
             return cachedResult.toList();
         }
     }
@@ -229,10 +281,21 @@ QVariantList Executor::queryListInternal(const QString& sql, const QVariantMap& 
         // 处理结果
         QVariantList result = m_resultHandler->handleListResult(query);
         
+        // 记录调试日志 - 使用完整的SQL执行流程跟踪
+        if (m_debugMode) {
+            logSqlExecutionFlow("selectList", sql, parameters, query.lastQuery(), 
+                               timer.elapsed(), QVariant::fromValue(result));
+        }
+        
         // 如果启用缓存，将结果存入缓存
         if (useCache && m_cacheManager && !statementId.isEmpty() && !result.isEmpty()) {
             QString cacheKey = generateCacheKey(statementId, parameters);
             m_cacheManager->put(cacheKey, QVariant::fromValue(result));
+            // 记录缓存存储调试信息
+            if (m_debugMode) {
+                qDebug() << QString("[Cache] Cache stored - StatementId: %1, CacheKey: %2, Records: %3")
+                            .arg(statementId, cacheKey).arg(result.size());
+            }
         }
         
         return result;
@@ -253,6 +316,9 @@ int Executor::updateInternal(const QString& sql, const QVariantMap& parameters,
         throw ConnectionException(QStringLiteral("Database connection is not available"));
     }
     
+    QElapsedTimer timer;
+    timer.start();
+    
     try {
         // 使用优化的方法获取处理后的SQL
         const QString processedSql = getProcessedSql(sql, parameters);
@@ -264,14 +330,7 @@ int Executor::updateInternal(const QString& sql, const QVariantMap& parameters,
         withParameterHandler(query, parameters);
         
         // 执行更新操作
-        // Debug: Query execution
-        // qDebug() << "[Executor] SQL:" << query.lastQuery();
-        // qDebug() << "[Executor] Bound values:" << query.boundValues();
-        
         if (!query.exec()) {
-            // Debug: Query execution error
-            // qDebug() << "[Executor] Error:" << query.lastError().text();
-            
             throw SqlExecutionException(
                 QStringLiteral("Failed to execute update: %1. SQL: %2")
                 .arg(query.lastError().text())
@@ -280,6 +339,18 @@ int Executor::updateInternal(const QString& sql, const QVariantMap& parameters,
         }
         
         int affectedRows = query.numRowsAffected();
+        
+        // 记录调试日志 - 使用完整的SQL执行流程跟踪
+        if (m_debugMode) {
+            QString operation = "update";
+            if (sql.toUpper().contains("INSERT")) {
+                operation = "insert";
+            } else if (sql.toUpper().contains("DELETE")) {
+                operation = "delete";
+            }
+            logSqlExecutionFlow(operation, sql, parameters, query.lastQuery(), 
+                               timer.elapsed(), QVariant(affectedRows));
+        }
         
         // 如果启用缓存失效且有受影响的行，清除相关缓存
         if (invalidateCache && m_cacheManager && affectedRows > 0) {
@@ -306,17 +377,35 @@ void Executor::invalidateCacheForStatement(const QString& statementId, const QSt
     // 从SQL语句中提取表名，用于缓存失效
     QStringList tableNames = extractTableNamesFromSql(sql);
     
+    // 记录缓存失效开始调试信息
+    if (m_debugMode) {
+        qDebug() << QString("[Cache] Begin cache invalidation - StatementId: %1, Tables: [%2]")
+                    .arg(statementId, tableNames.join(", "));
+    }
+    
     // 为每个表名创建失效模式
     for (const QString& tableName : tableNames) {
         // 失效所有与该表相关的缓存条目
         QString pattern = QStringLiteral(".*%1.*").arg(tableName);
         m_cacheManager->invalidateByPattern(pattern);
+        
+        // 记录表级缓存失效调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Table-level cache invalidation - Table: %1, Pattern: %2")
+                        .arg(tableName, pattern);
+        }
     }
     
     // 如果有具体的语句ID，也失效相关的缓存
     if (!statementId.isEmpty()) {
         QString statementPattern = QStringLiteral("cache_%1_.*").arg(statementId.split(QLatin1Char('.')).first());
         m_cacheManager->invalidateByPattern(statementPattern);
+        
+        // 记录语句级缓存失效调试信息
+        if (m_debugMode) {
+            qDebug() << QString("[Cache] Statement-level cache invalidation - StatementId: %1, Pattern: %2")
+                        .arg(statementId, statementPattern);
+        }
     }
 }
 
@@ -581,27 +670,67 @@ void Executor::logDebugInfo(const QString& operation, const QString& sql,
         for (auto it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
             paramList << QString("%1=%2").arg(it.key()).arg(it.value().toString());
         }
-        paramStr = QString(" 参数:[%1]").arg(paramList.join(", "));
+        paramStr = QString(" Parameters:[%1]").arg(paramList.join(", "));
     }
     
     QString resultStr;
     if (result.isValid()) {
         if (result.canConvert<QVariantList>()) {
-            resultStr = QString(" 结果:[返回%1条记录]").arg(result.toList().size());
+            resultStr = QString(" Result:[Returned %1 records]").arg(result.toList().size());
         } else if (result.canConvert<QVariantMap>()) {
             QVariantMap map = result.toMap();
-            resultStr = QString(" 结果:[对象包含%1个字段]").arg(map.size());
+            resultStr = QString(" Result:[Object contains %1 fields]").arg(map.size());
         } else {
-            resultStr = QString(" 结果:[%1]").arg(result.toString());
+            resultStr = QString(" Result:[%1]").arg(result.toString());
         }
     }
     
-    qDebug() << QString("[QtMyBatisORM DEBUG] %1: %2%3%4 耗时:%5ms")
+    qDebug() << QString("[QtMyBatisORM DEBUG] %1: %2%3%4 Elapsed:%5ms")
                 .arg(operation)
                 .arg(sql)
                 .arg(paramStr)
                 .arg(resultStr)
                 .arg(elapsedMs);
+}
+
+void Executor::logSqlExecutionFlow(const QString& operation, const QString& originalSql, 
+                                  const QVariantMap& parameters, const QString& finalSql,
+                                  qint64 elapsedMs, const QVariant& result) const
+{
+    if (!m_debugMode) {
+        return;
+    }
+    
+    // 1. 打印原始SQL（绑定参数前）
+    qDebug() << QString("[%1] Original SQL: %2").arg(operation, originalSql);
+    
+    // 2. 打印参数
+    if (!parameters.isEmpty()) {
+        QStringList paramList;
+        for (auto it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
+            paramList << QString("%1=%2").arg(it.key(), it.value().toString());
+        }
+        qDebug() << QString("[%1] Bound parameters: [%2]").arg(operation, paramList.join(", "));
+    }
+    
+    // 3. 打印最终SQL（绑定参数后）
+    qDebug() << QString("[%1] Final SQL: %2").arg(operation, finalSql);
+    
+    // 4. 打印执行结果和耗时
+    if (result.isValid()) {
+        if (result.canConvert<QVariantList>()) {
+            QVariantList list = result.toList();
+            qDebug() << QString("[%1] Execution successful, returned %2 records, elapsed %3ms").arg(operation).arg(list.size()).arg(elapsedMs);
+            // 打印所有查询结果
+            for (int i = 0; i < list.size(); ++i) {
+                qDebug() << QString("[%1] Record %2: %3").arg(operation).arg(i+1).arg(list[i].toString());
+            }
+        } else {
+            qDebug() << QString("[%1] Execution successful, result: %2, elapsed %3ms").arg(operation, result.toString()).arg(elapsedMs);
+        }
+    } else {
+        qDebug() << QString("[%1] Execution successful, elapsed %2ms").arg(operation).arg(elapsedMs);
+    }
 }
 
 } // namespace QtMyBatisORM

@@ -10,7 +10,7 @@
 namespace QtMyBatisORM {
 
 /**
- * XML映射文件解析器
+ * XML mapper file parser
  */
 class XMLMapperParser : public QObject
 {

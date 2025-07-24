@@ -16,6 +16,7 @@ ParameterHandler::ParameterHandler(QObject* parent)
 void ParameterHandler::setParameters(QSqlQuery& query, const QVariantMap& parameters)
 {
     try {
+        // Check if query uses named parameters or positional parameters;
         // 检查查询是否使用命名参数或位置参数
         QString sql = query.lastQuery();
         if (sql.isEmpty()) {
@@ -31,11 +32,12 @@ void ParameterHandler::setParameters(QSqlQuery& query, const QVariantMap& parame
         } else if (hasPositionalParams) {
             bindByIndex(query, parameters);
         } else if (!parameters.isEmpty()) {
+            // No parameter placeholders in SQL but parameters provided, log warning;
             // SQL中没有参数占位符但提供了参数，记录警告
             qWarning() << "Parameters provided but no placeholders found in SQL:" << sql;
         }
     } catch (const QtMyBatisException&) {
-        throw; // 重新抛出已知异常
+        throw; // Re-throw known exceptions
     } catch (const std::exception& e) {
         throw MappingException(
             QStringLiteral("Unexpected error during parameter binding: %1").arg(QString::fromLatin1(e.what()))
@@ -49,7 +51,7 @@ QVariant ParameterHandler::convertParameter(const QVariant& value, const QString
         return convertToSqlType(value);
     }
     
-    // 根据目标类型转换
+    // Convert according to target type
     if (targetType == QStringLiteral("int") || targetType == QStringLiteral("integer")) {
         return value.toInt();
     } else if (targetType == QStringLiteral("string") || targetType == QStringLiteral("varchar")) {
@@ -68,6 +70,7 @@ QVariant ParameterHandler::convertParameter(const QVariant& value, const QString
 void ParameterHandler::bindByIndex(QSqlQuery& query, const QVariantMap& parameters)
 {
     try {
+        // Calculate the number of placeholders in SQL
         // 计算SQL中的占位符数量
         QString sql = query.lastQuery();
         int placeholderCount = sql.count(QLatin1Char('?'));
@@ -84,9 +87,11 @@ void ParameterHandler::bindByIndex(QSqlQuery& query, const QVariantMap& paramete
             );
         }
         
+        // Bind parameters by index (using numeric keys or alphabetical order)
         // 按索引绑定参数（使用数字键或按字母顺序）
         QStringList keys = parameters.keys();
         
+        // Try to sort by numeric keys, if failed then by alphabetical order
         // 尝试按数字键排序，如果失败则按字母顺序
         bool hasNumericKeys = true;
         for (const QString& key : keys) {
@@ -99,12 +104,12 @@ void ParameterHandler::bindByIndex(QSqlQuery& query, const QVariantMap& paramete
         }
         
         if (hasNumericKeys) {
-            // 按数字键排序
+            // Sort by numeric keys
             std::sort(keys.begin(), keys.end(), [](const QString& a, const QString& b) {
                 return a.toInt() < b.toInt();
             });
         } else {
-            // 按字母顺序排序
+            // Sort by alphabetical order
             keys.sort();
         }
         
@@ -114,7 +119,7 @@ void ParameterHandler::bindByIndex(QSqlQuery& query, const QVariantMap& paramete
         }
         
     } catch (const QtMyBatisException&) {
-        throw; // 重新抛出已知异常
+        throw; // Re-throw known exceptions
     } catch (const std::exception& e) {
         throw MappingException(
             QStringLiteral("Error binding parameters by index: %1").arg(QString::fromLatin1(e.what()))
@@ -127,6 +132,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
     try {
         QString sql = query.lastQuery();
         
+        // Extract all named parameters from SQL
         // 提取SQL中的所有命名参数
         QRegularExpression re(QStringLiteral(R"(:(\w+))"));
         QRegularExpressionMatchIterator it = re.globalMatch(sql);
@@ -140,6 +146,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
             }
         }
         
+        // Check for missing required parameters
         // 检查是否有未提供的必需参数
         QStringList missingParams;
         for (const QString& sqlParam : sqlParameters) {
@@ -154,6 +161,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
             );
         }
         
+        // Check for extra parameters
         // 检查是否有多余的参数
         QStringList extraParams;
         for (auto paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt) {
@@ -166,7 +174,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
             qWarning() << "Extra parameters provided (will be ignored):" << extraParams.join(QStringLiteral(", "));
         }
         
-        // 按名称绑定参数
+        // Bind parameters by name
         for (auto paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt) {
             QString paramName = paramIt.key();
             QString fullParamName = paramName.startsWith(QLatin1Char(':')) ? paramName : QStringLiteral(":") + paramName;
@@ -178,7 +186,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
         }
         
     } catch (const QtMyBatisException&) {
-        throw; // 重新抛出已知异常
+        throw; // Re-throw known exceptions
     } catch (const std::exception& e) {
         throw MappingException(
             QStringLiteral("Error binding parameters by name: %1").arg(QString::fromLatin1(e.what()))
@@ -188,7 +196,7 @@ void ParameterHandler::bindByName(QSqlQuery& query, const QVariantMap& parameter
 
 QVariant ParameterHandler::convertToSqlType(const QVariant& value)
 {
-    // 确保值适合SQL数据库
+    // Ensure value is suitable for SQL database
     switch (value.typeId()) {
         case QMetaType::UnknownType:
             return QVariant();
@@ -216,7 +224,7 @@ QVariant ParameterHandler::convertToSqlType(const QVariant& value)
             return value.toUuid().toString();
         case QMetaType::QVariantList:
         case QMetaType::QStringList: {
-            // 将列表转换为JSON字符串
+            // Convert list to JSON string
             QJsonArray jsonArray;
             QVariantList list = value.toList();
             for (const QVariant& item : list) {
@@ -236,7 +244,7 @@ QVariant ParameterHandler::convertToSqlType(const QVariant& value)
             return doc.toJson(QJsonDocument::Compact);
         }
         case QMetaType::QVariantMap: {
-            // 将Map转换为JSON字符串
+            // Convert Map to JSON string
             QVariantMap map = value.toMap();
             QJsonObject jsonObject;
             for (auto it = map.begin(); it != map.end(); ++it) {
@@ -257,7 +265,7 @@ QVariant ParameterHandler::convertToSqlType(const QVariant& value)
             return doc.toJson(QJsonDocument::Compact);
         }
         default:
-            // 对于未知类型，尝试转换为字符串
+            // For unknown types, try to convert to string
             if (value.canConvert<QString>()) {
                 return value.toString();
             }
@@ -267,6 +275,7 @@ QVariant ParameterHandler::convertToSqlType(const QVariant& value)
 
 bool ParameterHandler::isValidParameterName(const QString& name)
 {
+    // Check if parameter name is valid: must start with colon, followed by letter or underscore, then can be followed by letters, digits or underscores
     // 检查参数名是否有效：必须以冒号开头，后跟字母或下划线，然后可以跟字母、数字或下划线
     QRegularExpression re(QStringLiteral(R"(^:[a-zA-Z_][a-zA-Z0-9_]*$)"));
     return re.match(name).hasMatch();

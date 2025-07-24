@@ -204,7 +204,7 @@ void TestQtMyBatisHelper::testTransactionOperations()
     configFile.close();
     
     QVERIFY(QtMyBatisHelper::initialize(m_configFile));
-    QtMyBatisHelper::enableDebugMode(true);
+    QtMyBatisHelper::setDebugMode(true);
     
     // 创建测试表
     QString createTableSql = "CREATE TABLE test_table (id INTEGER PRIMARY KEY, name TEXT, value INTEGER)";
@@ -389,17 +389,17 @@ void TestQtMyBatisHelper::testDebugMode()
     
     QVERIFY(QtMyBatisHelper::initialize(m_configFile));
     
-    // 测试调试模式开关
-    QVERIFY(!QtMyBatisHelper::isDebugMode()); // 初始状态
+    // 测试调试模式开关 - 应该从配置文件读取到debug=true
+    QVERIFY(QtMyBatisHelper::isDebugMode()); // 从配置文件读取的状态
     
-    QtMyBatisHelper::enableDebugMode(true);
+    QtMyBatisHelper::setDebugMode(true);
     QVERIFY(QtMyBatisHelper::isDebugMode());
     
-    QtMyBatisHelper::enableDebugMode(false);
+    QtMyBatisHelper::setDebugMode(false);
     QVERIFY(!QtMyBatisHelper::isDebugMode());
     
     // 开启调试模式并执行SQL，检查是否有调试输出（这里只能通过手动观察）
-    QtMyBatisHelper::enableDebugMode(true);
+    QtMyBatisHelper::setDebugMode(true);
     
     QString createTableSql = "CREATE TABLE debug_test (id INTEGER PRIMARY KEY, name TEXT)";
     QtMyBatisHelper::execute(createTableSql);

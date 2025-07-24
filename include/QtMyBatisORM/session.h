@@ -9,7 +9,6 @@
 #include <QTimer>
 #include <QStack>
 #include <QDateTime>
-#include "qtmybatisexception.h"
 
 namespace QtMyBatisORM {
 
@@ -17,7 +16,7 @@ class Executor;
 class MapperRegistry;
 
 /**
- * 数据库会话
+ * Database session
  */
 class Session : public QObject
 {
@@ -29,46 +28,47 @@ public:
                     QSharedPointer<MapperRegistry> mapperRegistry,
                     QObject* parent = nullptr);
     
-    // 基本CRUD操作
+    // Basic CRUD operations
     QVariant selectOne(const QString& statementId, const QVariantMap& parameters = {});
     QVariantList selectList(const QString& statementId, const QVariantMap& parameters = {});
     int insert(const QString& statementId, const QVariantMap& parameters = {});
     int update(const QString& statementId, const QVariantMap& parameters = {});
     int remove(const QString& statementId, const QVariantMap& parameters = {});
     
-    // 执行原始SQL语句
+    // Execute raw SQL statements
     int execute(const QString& sql, const QVariantMap& parameters = {});
     
-    // 批量操作
+    // Batch operations
     int batchInsert(const QString& statementId, const QList<QVariantMap>& parametersList);
     int batchUpdate(const QString& statementId, const QList<QVariantMap>& parametersList);
     int batchRemove(const QString& statementId, const QList<QVariantMap>& parametersList);
     
-    // 事务管理
+    // Transaction management
     void beginTransaction();
     void beginTransaction(int timeoutSeconds);
     void commit();
     void rollback();
     bool isInTransaction() const;
     
+    // Nested transaction support (savepoints)
     // 嵌套事务支持 (保存点)
     QString setSavepoint(const QString& savepointName = QString());
     void rollbackToSavepoint(const QString& savepointName);
     void releaseSavepoint(const QString& savepointName);
     
-    // 事务状态查询
+    // Transaction status queries
     int getTransactionLevel() const;
     QDateTime getTransactionStartTime() const;
     bool isTransactionTimedOut() const;
     
-    // 获取Mapper
+    // Get Mapper
     template<typename T>
     T* getMapper();
     
     void close();
     bool isClosed() const;
     
-    // 调试功能
+    // Debug functionality
     void setDebugMode(bool enabled);
     bool isDebugMode() const;
     
@@ -89,12 +89,13 @@ private:
     bool m_inTransaction;
     bool m_closed;
     
-    // 事务管理相关
+    // Transaction management related
     QDateTime m_transactionStartTime;
-    QDateTime m_transactionTimeoutPoint; // 添加事务超时时间点
+    QDateTime m_transactionTimeoutPoint; // Add transaction timeout point
     int m_transactionTimeoutSeconds;
     QTimer* m_transactionTimer;
     
+    // Nested transaction support
     // 嵌套事务支持
     QStack<QString> m_savepointStack;
     int m_savepointCounter;

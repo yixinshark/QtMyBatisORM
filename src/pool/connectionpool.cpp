@@ -340,7 +340,6 @@ QSharedPointer<QSqlDatabase> ConnectionPool::createConnection()
                 db->close();
             }
             delete db;
-            qDebug() << "remove database connection:" << connectionName;
             QSqlDatabase::removeDatabase(connectionName);
         });
     

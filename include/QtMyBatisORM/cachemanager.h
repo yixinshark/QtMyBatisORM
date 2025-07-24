@@ -10,7 +10,7 @@
 namespace QtMyBatisORM {
 
 /**
- * 缓存管理器
+ * Cache manager
  */
 class CacheManager : public QObject
 {
@@ -31,13 +31,13 @@ public:
     int size() const;
     bool isEnabled() const;
     
-    // LRU和统计功能
+    // LRU and statistics functionality
     CacheStats getStats() const;
     void resetStats();
     double getHitRate() const;
     void printStats() const;
     
-    // 缓存优化功能
+    // Cache optimization functionality；缓存优化功能
     void adjustCacheSize();
     void setMaxSize(int maxSize);
     int getMaxSize() const;
@@ -58,9 +58,10 @@ private:
     int m_expireTime;
     bool m_enabled;
     
-    // 统计信息
+    // Statistics information
     mutable CacheStats m_stats;
     
+    // Sequence counter to ensure deterministic LRU ordering
     // 序列号计数器，用于确保LRU顺序的确定性
     qint64 m_sequenceCounter;
     

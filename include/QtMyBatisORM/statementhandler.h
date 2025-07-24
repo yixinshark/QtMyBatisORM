@@ -11,7 +11,7 @@ namespace QtMyBatisORM {
 class DynamicSqlProcessor;
 
 /**
- * SQL语句处理器
+ * SQL statement handler
  */
 class StatementHandler : public QObject
 {

@@ -3,6 +3,7 @@
 #include "session.h"
 #include "mapperregistry.h"
 #include "mapperproxy.h"
+#include "qtmybatisexception.h"
 #include <QHash>
 
 namespace QtMyBatisORM {

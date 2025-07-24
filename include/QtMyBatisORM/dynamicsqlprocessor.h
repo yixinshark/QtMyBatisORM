@@ -9,55 +9,51 @@
 namespace QtMyBatisORM {
 
 /**
- * @brief 动态SQL处理器，用于处理MyBatis风格的动态SQL语句
+ * @brief Dynamic SQL processor for handling MyBatis-style dynamic SQL statements
  * 
- * 支持以下动态SQL元素：
- * - #{param} - 参数替换
- * - <if test="condition">content</if> - 条件判断
- * - <foreach collection="collection" item="item" separator="," open="(" close=")">content</foreach> - 循环
- * - <choose><when test="condition">content</when><otherwise>content</otherwise></choose> - 选择
- * - <where>content</where> - WHERE子句处理
- * - <set>content</set> - SET子句处理
+ * Supports the following dynamic SQL elements:
+ * - #{param} - Parameter substitution
+ * - <if test="condition">content</if> - Conditional judgment
+ * - <foreach collection="collection" item="item" separator="," open="(" close=")">content</foreach> - Loop
+ * - <choose><when test="condition">content</when><otherwise>content</otherwise></choose> - Choice
+ * - <where>content</where> - WHERE clause handling
+ * - <set>content</set> - SET clause handling
  */
 class DynamicSqlProcessor : public QObject
 {
     Q_OBJECT
 
 public:
-    /**
-     * @brief 构造函数
-     * @param parent 父对象
-     */
     explicit DynamicSqlProcessor(QObject* parent = nullptr);
 
     /**
-     * @brief 处理动态SQL语句
-     * @param sql 包含动态元素的SQL语句
-     * @param parameters 参数映射
-     * @return 处理后的SQL语句
+     * @brief Process dynamic SQL statements
+     * @param sql SQL statement containing dynamic elements
+     * @param parameters Parameter mapping
+     * @return Processed SQL statement
      */
     QString process(const QString& sql, const QVariantMap& parameters);
 
 private:
     /**
-     * @brief 处理if条件
-     * @param condition 条件表达式
-     * @param content if内容
-     * @param parameters 参数映射
-     * @return 处理后的内容
+     * @brief Process if conditions
+     * @param condition Condition expression
+     * @param content If content
+     * @param parameters Parameter mapping
+     * @return Processed content
      */
     QString processIf(const QString& condition, const QString& content, const QVariantMap& parameters);
 
     /**
-     * @brief 处理foreach循环
-     * @param collection 集合名称
-     * @param item 项名称
-     * @param content foreach内容
-     * @param parameters 参数映射
-     * @param separator 分隔符
-     * @param open 开始字符
-     * @param close 结束字符
-     * @return 处理后的内容
+     * @brief Process foreach loops
+     * @param collection Collection name
+     * @param item Item name
+     * @param content Foreach content
+     * @param parameters Parameter mapping
+     * @param separator Separator
+     * @param open Opening character
+     * @param close Closing character
+     * @return Processed content
      */
     QString processForeach(const QString& collection, const QString& item, 
                           const QString& content, const QVariantMap& parameters,
@@ -65,51 +61,51 @@ private:
                           const QString& close);
 
     /**
-     * @brief 处理choose/when/otherwise结构
-     * @param content choose内容
-     * @param parameters 参数映射
-     * @return 处理后的内容
+     * @brief Process choose/when/otherwise structure
+     * @param content Choose content
+     * @param parameters Parameter mapping
+     * @return Processed content
      */
     QString processChoose(const QString& content, const QVariantMap& parameters);
 
     /**
-     * @brief 处理where子句
-     * @param content where内容
-     * @param parameters 参数映射
-     * @return 处理后的内容
+     * @brief Process where clause
+     * @param content Where content
+     * @param parameters Parameter mapping
+     * @return Processed content
      */
     QString processWhere(const QString& content, const QVariantMap& parameters);
 
     /**
-     * @brief 处理set子句
-     * @param content set内容
-     * @param parameters 参数映射
-     * @return 处理后的内容
+     * @brief Process set clause
+     * @param content Set content
+     * @param parameters Parameter mapping
+     * @return Processed content
      */
     QString processSet(const QString& content, const QVariantMap& parameters);
 
     /**
-     * @brief 评估条件表达式
-     * @param condition 条件表达式
-     * @param parameters 参数映射
-     * @return 条件是否为真
+     * @brief Evaluate condition expression
+     * @param condition Condition expression
+     * @param parameters Parameter mapping
+     * @return Whether condition is true
      */
     bool evaluateCondition(const QString& condition, const QVariantMap& parameters);
 
     /**
-     * @brief 替换参数占位符
-     * @param content 包含参数占位符的内容
-     * @param parameters 参数映射
-     * @return 替换后的内容
+     * @brief Replace parameter placeholders
+     * @param content Content containing parameter placeholders
+     * @param parameters Parameter mapping
+     * @return Content after replacement
      */
     QString replaceParameters(const QString& content, const QVariantMap& parameters);
 
 private:
-    QRegularExpression m_ifPattern;       ///< if标签的正则表达式
-    QRegularExpression m_foreachPattern;  ///< foreach标签的正则表达式
-    QRegularExpression m_choosePattern;   ///< choose标签的正则表达式
-    QRegularExpression m_wherePattern;    ///< where标签的正则表达式
-    QRegularExpression m_setPattern;      ///< set标签的正则表达式
+    QRegularExpression m_ifPattern;       ///< Regular expression for if tags
+    QRegularExpression m_foreachPattern;  ///< Regular expression for foreach tags
+    QRegularExpression m_choosePattern;   ///< Regular expression for choose tags
+    QRegularExpression m_wherePattern;    ///< Regular expression for where tags
+    QRegularExpression m_setPattern;      ///< Regular expression for set tags
 };
 
 } // namespace QtMyBatisORM

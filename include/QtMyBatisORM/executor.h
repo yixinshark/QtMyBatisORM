@@ -16,7 +16,7 @@ class ResultHandler;
 class CacheManager;
 
 /**
- * SQL执行器
+ * SQL executor
  */
 class Executor : public QObject
 {
@@ -41,9 +41,8 @@ public:
     
     void clearCache(const QString& pattern = QLatin1String(""));
     
-    // 调试功能
     void setDebugMode(bool enabled);
-    bool isDebugMode() const;
+    [[nodiscard]] bool isDebugMode() const;
     
     // For testing purposes
     QString generateCacheKey(const QString& statementId, const QVariantMap& parameters);
@@ -59,10 +58,10 @@ private:
     void invalidateCacheForStatement(const QString& statementId, const QString& sql);
     QStringList extractTableNamesFromSql(const QString& sql);
     
-    // 获取处理后的SQL语句，优先从缓存中获取
+    // Get processed SQL statement, preferentially from cache
     QString getProcessedSql(const QString& sql, const QVariantMap& parameters);
     
-    // 使用对象池或回退策略绑定参数
+    // Use object pool or fallback strategy to bind parameters
     void withParameterHandler(QSqlQuery &query, const QVariantMap &parameters);
     
     QSharedPointer<QSqlDatabase> m_connection;
@@ -70,14 +69,17 @@ private:
     QSharedPointer<ParameterHandler> m_parameterHandler;
     QSharedPointer<ResultHandler> m_resultHandler;
     QSharedPointer<CacheManager> m_cacheManager;
-    QHash<QString, QString> m_processedSqlCache; // SQL处理缓存
-    QMutex m_sqlCacheMutex; // 保护SQL缓存的互斥锁
+    QHash<QString, QString> m_processedSqlCache; // SQL processing cache
+    QMutex m_sqlCacheMutex; // Mutex to protect SQL cache
     
-    // 调试相关
+    // Debug related
     bool m_debugMode;
     void logDebugInfo(const QString& operation, const QString& sql, 
                      const QVariantMap& parameters, qint64 elapsedMs, 
                      const QVariant& result = QVariant()) const;
+    void logSqlExecutionFlow(const QString& operation, const QString& originalSql, 
+                            const QVariantMap& parameters, const QString& finalSql,
+                            qint64 elapsedMs, const QVariant& result = QVariant()) const;
 };
 
 } // namespace QtMyBatisORM

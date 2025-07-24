@@ -13,7 +13,7 @@ class MapperRegistry;
 class CacheManager;
 
 /**
- * 会话工厂
+ * Session factory
  */
 class SessionFactory : public QObject
 {
@@ -31,7 +31,6 @@ public:
     void close();
     bool isClosed() const;
     
-    // 获取活动Session数量
     int getActiveSessionCount() const;
     
 private:

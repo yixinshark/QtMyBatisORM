@@ -11,6 +11,7 @@ namespace QtMyBatisORM {
 class Session;
 
 /**
+ * Mapper registry
  * Mapper注册表
  */
 class MapperRegistry : public QObject
@@ -23,7 +24,7 @@ public:
     void registerMapper(const QString& mapperName, const MapperConfig& config);
     void registerMappers(const QList<MapperConfig>& configs);
     
-    // 从配置管理器加载Mapper
+    // Load Mappers from configuration manager
     bool loadMappersFromConfiguration();
     
     template<typename T>
@@ -32,11 +33,10 @@ public:
     MapperConfig getMapperConfig(const QString& mapperName) const;
     bool hasMapper(const QString& mapperName) const;
     
-    // 验证功能
+    // Validation functionality
     bool validateMapper(const QString& mapperName) const;
     bool validateAllMappers() const;
     
-    // 查询功能
     QStringList getMapperNames() const;
     QStringList getStatementIds(const QString& mapperName) const;
     int getMapperCount() const;
@@ -55,15 +55,16 @@ private:
 template<typename T>
 T* MapperRegistry::getMapper(QSharedPointer<Session> session)
 {
-    // 从类型名获取Mapper名称
+    // Get Mapper name from type name
     QString typeName = T::staticMetaObject.className();
-    // 移除命名空间前缀
+    // Remove namespace prefix
     if (typeName.contains("::")) {
         typeName = typeName.split("::").last();
     }
     
     QString mapperName = getMapperNameFromType(typeName);
     
+    // Create or get Mapper proxy instance
     // 创建或获取Mapper代理实例
     QString instanceKey = QString("%1_%2").arg(mapperName).arg(reinterpret_cast<quintptr>(session.data()));
     

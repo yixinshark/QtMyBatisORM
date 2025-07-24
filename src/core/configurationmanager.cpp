@@ -84,7 +84,7 @@ bool ConfigurationManager::loadMappers(const QStringList& mapperPaths)
     try {
         QList<MapperConfig> mappers = m_xmlParser->parseMappers(mapperPaths);
         
-        // 检查命名空间冲突
+        // Check for namespace conflicts
         for (const MapperConfig& mapper : mappers) {
             if (m_mappers.contains(mapper.namespace_)) {
                 ConfigurationException ex(

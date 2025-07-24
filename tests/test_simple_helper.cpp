@@ -50,7 +50,7 @@ void TestSimpleHelper::testBasicInitialization()
     QVERIFY(QtMyBatisHelper::initialize(configFile));
     QVERIFY(QtMyBatisHelper::isInitialized());
     
-    QtMyBatisHelper::enableDebugMode(true);
+    QtMyBatisHelper::setDebugMode(true);
     QVERIFY(QtMyBatisHelper::isDebugMode());
 }
 
@@ -83,7 +83,7 @@ void TestSimpleHelper::testSimpleCRUD()
     file.close();
     
     QVERIFY(QtMyBatisHelper::initialize(configFile));
-    QtMyBatisHelper::enableDebugMode(true);
+    QtMyBatisHelper::setDebugMode(true);
     
     // 使用事务确保所有操作在同一个Session中执行
     bool result = QtMyBatisHelper::executeInTransaction([&](QSharedPointer<Session> session) -> bool {

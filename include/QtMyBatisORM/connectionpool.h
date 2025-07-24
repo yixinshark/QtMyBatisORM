@@ -14,6 +14,7 @@
 namespace QtMyBatisORM {
 
 /**
+ * Connection info structure for tracking connection idle time and statistics
  * 连接信息结构，用于跟踪连接的空闲时间和统计信息
  */
 struct ConnectionInfo
@@ -21,7 +22,7 @@ struct ConnectionInfo
     QSharedPointer<QSqlDatabase> connection;
     QDateTime lastUsedTime;
     QDateTime createdTime;
-    QDateTime lastValidationTime; // 添加上次验证时间字段
+    QDateTime lastValidationTime; // Add last validation time field；添加上次验证时间字段
     int usageCount;
     bool isHealthy;
     
@@ -30,13 +31,13 @@ struct ConnectionInfo
         : connection(conn), 
           lastUsedTime(QDateTime::currentDateTime()),
           createdTime(QDateTime::currentDateTime()),
-          lastValidationTime(), // 初始为无效时间，强制首次验证
+          lastValidationTime(), // Initially invalid time, force first validation
           usageCount(0),
           isHealthy(true) {}
 };
 
 /**
- * 数据库连接池
+ * Database connection pool
  */
 class ConnectionPool : public QObject
 {
@@ -54,13 +55,13 @@ public:
     int usedConnections() const;
     int totalConnections() const;
     
-    // 监控和健康检查方法
+    // Monitoring and health check methods
     ConnectionPoolStats getStats() const;
     ConnectionPoolHealth getHealthReport() const;
     void performHealthCheck();
     void resetStats();
     
-    // 连接池优化方法
+    // Connection pool optimization methods
     void monitorConnectionUsage();
     
 private slots:
@@ -81,7 +82,7 @@ private:
     int m_connectionCounter;
     bool m_closed;
     
-    // 统计信息
+    // Statistics information
     mutable ConnectionPoolStats m_stats;
     QHash<QSharedPointer<QSqlDatabase>, ConnectionInfo> m_connectionInfoMap;
 };

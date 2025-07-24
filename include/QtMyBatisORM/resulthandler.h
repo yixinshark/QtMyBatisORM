@@ -10,7 +10,7 @@
 namespace QtMyBatisORM {
 
 /**
- * 结果处理器
+ * Result handler
  */
 class ResultHandler : public QObject
 {
@@ -25,13 +25,13 @@ public:
     QVariantMap recordToMap(const QSqlQuery& query);
     QVariant convertFromSqlType(const QVariant& value, const QString& targetType = QLatin1String(""));
     
-    // 实用方法（公开用于测试和外部使用）
+    // Utility methods (public for testing and external use)
     QStringList getColumnNames(const QSqlQuery& query);
     
 private:
     QVariantMap extractRecord(const QSqlQuery& query);
     
-    // 辅助方法
+    // Helper methods
     QVariant normalizeValue(const QVariant& value);
     QVariant parseJsonValue(const QString& jsonString);
     QVariantList parseJsonArray(const QString& jsonString);

@@ -16,6 +16,8 @@ namespace QtMyBatisORM {
 class Session;
 
 /**
+ * Mapper dynamic proxy
+ * Uses Qt meta-object system to implement dynamic method calls, converting Mapper interface method calls to SQL execution
  * Mapper动态代理
  * 使用Qt元对象系统实现动态方法调用，将Mapper接口方法调用转换为SQL执行
  */
@@ -29,10 +31,10 @@ public:
                         const MapperConfig& config,
                         QObject* parent = nullptr);
     
-    // 使用Qt的元对象系统动态调用方法
+    // Use Qt's meta-object system to dynamically call methods
     QVariant invokeMethod(const QString& methodName, const QVariantList& args);
     
-    // 支持Qt元对象系统的方法调用
+    // Support Qt meta-object system method calls
     QVariant invokeMethod(const QString& methodName, 
                          QGenericReturnArgument returnValue,
                          QGenericArgument val0 = QGenericArgument(),
@@ -41,7 +43,7 @@ public:
                          QGenericArgument val3 = QGenericArgument(),
                          QGenericArgument val4 = QGenericArgument());
     
-    // 支持不同参数类型的便捷方法
+    // Convenience methods supporting different parameter types
     template<typename ReturnType>
     ReturnType invoke(const QString& methodName, const QVariantList& args = {});
     
@@ -51,15 +53,11 @@ public:
     QString getMapperName() const;
     MapperConfig getConfig() const;
     
-    // 检查方法是否存在
+    // Check if method exists
     bool hasMethod(const QString& methodName) const;
     
-    // 获取方法信息
+    // Get method information
     QStringList getMethodNames() const;
-    
-protected:
-    // Qt元对象系统支持 - 注释掉，使用Q_OBJECT宏自动生成的版本
-    // int qt_metacall(QMetaObject::Call call, int id, void** arguments) override;
     
 private:
     QVariant executeStatement(const QString& statementId, const QVariantMap& parameters);
@@ -67,11 +65,11 @@ private:
     QVariantMap convertGenericArgsToParameters(const QList<QGenericArgument>& args, const StatementConfig& config);
     QString buildStatementId(const QString& methodName);
     
-    // 参数类型推断和转换
+    // Parameter type inference and conversion
     QVariant convertArgumentToVariant(const QGenericArgument& arg);
     QString inferParameterName(int index, const StatementConfig& config);
     
-    // 返回值类型处理
+    // Return value type handling
     QVariant convertReturnValue(const QVariant& result, const QString& expectedType);
     bool isListReturnType(const QString& returnType) const;
     

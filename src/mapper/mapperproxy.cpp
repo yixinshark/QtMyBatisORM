@@ -114,14 +114,6 @@ QStringList MapperProxy::getMethodNames() const
     return methodNames;
 }
 
-// Qt元对象系统支持的实现已注释掉，使用Q_OBJECT宏自动生成的版本
-// int MapperProxy::qt_metacall(QMetaObject::Call call, int id, void** arguments)
-// {
-//     // 这里可以实现动态方法调用的元对象支持
-//     // 暂时使用基类实现
-//     return QObject::qt_metacall(call, id, arguments);
-// }
-
 QVariant MapperProxy::executeStatement(const QString& statementId, const QVariantMap& parameters)
 {
     if (!m_config.statements.contains(statementId)) {
@@ -164,7 +156,7 @@ QVariant MapperProxy::executeStatement(const QString& statementId, const QVarian
 
 QVariantMap MapperProxy::convertArgsToParameters(const QVariantList& args, const StatementConfig& config)
 {
-    Q_UNUSED(config); // 标记参数为已使用，避免警告
+    Q_UNUSED(config);
     QVariantMap parameters;
     
     if (args.isEmpty()) {

@@ -322,6 +322,15 @@ void Session::beginTransaction(int timeoutSeconds)
             m_transactionTimer->start(timeoutSeconds * 1000);
         }
         
+        // 调试日志
+        if (isDebugMode()) {
+            if (timeoutSeconds > 0) {
+                qDebug() << QString("[Session] Begin transaction, timeout: %1 seconds").arg(timeoutSeconds);
+            } else {
+                qDebug() << "[Session] Begin transaction (no timeout limit)";
+            }
+        }
+        
     } catch (const TransactionException& e) {
         TransactionException ex(e);
         ex.setContext(QLatin1String("operation"), QLatin1String("beginTransaction"));
@@ -400,6 +409,12 @@ void Session::commit()
             throw ex;
         }
         
+        // 调试日志
+        if (isDebugMode()) {
+            qint64 transactionDuration = m_transactionStartTime.secsTo(QDateTime::currentDateTime());
+            qDebug() << QString("[Session] Transaction committed successfully, duration: %1 seconds").arg(transactionDuration);
+        }
+        
         // 清理事务状态
         m_inTransaction = false;
         m_autoCommit = true;
@@ -459,6 +474,12 @@ void Session::rollback()
             ex.setContext(QStringLiteral("sqlErrorType"), m_connection->lastError().type());
             ex.setContext(QStringLiteral("transactionDuration"), m_transactionStartTime.secsTo(QDateTime::currentDateTime()));
             throw ex;
+        }
+        
+        // 调试日志
+        if (isDebugMode()) {
+            qint64 transactionDuration = m_transactionStartTime.secsTo(QDateTime::currentDateTime());
+            qDebug() << QString("[Session] Transaction rolled back successfully, duration: %1 seconds").arg(transactionDuration);
         }
         
         // 清理事务状态
@@ -784,9 +805,6 @@ void Session::checkClosed()
         throw SqlExecutionException(QLatin1String("Session is closed"));
     }
 }
-
-
-
 
 int Session::batchInsert(const QString& statementId, const QList<QVariantMap>& parametersList)
 {

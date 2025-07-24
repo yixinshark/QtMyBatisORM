@@ -8,11 +8,11 @@
 namespace QtMyBatisORM {
 
 /**
- * 数据库配置结构
+ * Database configuration structure
  */
 struct DatabaseConfig
 {
-    // 基本数据库配置
+    // Basic database configuration
     QString driverName;     // QMYSQL, QSQLITE (JSON: type)
     QString hostName;       // JSON: host
     int port = 3306;
@@ -20,26 +20,26 @@ struct DatabaseConfig
     QString userName;       // JSON: username
     QString password;
     
-    // 调试配置
-    bool debug = false;     // 是否开启SQL调试日志
+    // Debug configuration
+    bool debug = false;     // Whether to enable SQL debug logging
     
-    // 连接池配置
+    // Connection pool configuration
     int maxConnections = 10;        // JSON: max_connection_count
-    int minConnections = 2;         // 固定值
-    int maxIdleTime = 300;          // 固定值（秒）
-    int maxWaitTime = 5000;         // JSON: max_wait_time（毫秒）
+    int minConnections = 2;         // Fixed value
+    int maxIdleTime = 300;          // Fixed value (seconds)
+    int maxWaitTime = 5000;         // JSON: max_wait_time (milliseconds)
     
-    // 缓存配置（固定值，简化配置）
+    // Cache configuration
     bool cacheEnabled = true;
     int maxCacheSize = 1000;
-    int cacheExpireTime = 600;      // 秒
+    int cacheExpireTime = 600;      // seconds
     
-    // SQL文件列表
+    // SQL file list
     QStringList sqlFiles;           // JSON: sql_files
 };
 
 /**
- * SQL语句类型枚举
+ * SQL statement type enumeration
  */
 enum class StatementType
 {
@@ -47,11 +47,11 @@ enum class StatementType
     INSERT,
     UPDATE,
     DELETE,
-    DDL  // CREATE, ALTER, DROP等
+    DDL  // CREATE, ALTER, DROP, etc.
 };
 
 /**
- * SQL语句配置
+ * SQL statement configuration
  */
 struct StatementConfig
 {
@@ -61,35 +61,35 @@ struct StatementConfig
     QString parameterType;
     QString resultType;
     bool useCache = false;
-    QHash<QString, QString> dynamicElements;  // if, foreach等动态元素
+    QHash<QString, QString> dynamicElements;  // Dynamic elements like if, foreach, etc.
 };
 
 /**
- * Mapper配置
+ * Mapper configuration
  */
 struct MapperConfig
 {
     QString namespace_;
     QString xmlPath;
     QHash<QString, StatementConfig> statements;
-    QHash<QString, QString> resultMaps;  // 结果映射配置
+    QHash<QString, QString> resultMaps;  // Result mapping configuration
 };
 
 /**
- * 缓存条目
+ * Cache entry
  */
 struct CacheEntry
 {
     QVariant value;
     QDateTime timestamp;
-    QDateTime lastAccessTime;  // 最后访问时间，用于LRU策略
+    QDateTime lastAccessTime;  // Last access time, used for LRU strategy
     int accessCount = 0;
-    int hitCount = 0;  // 命中次数统计
-    qint64 sequenceNumber = 0;  // 序列号，用于确保LRU顺序的确定性
+    int hitCount = 0;  // Hit count statistics
+    qint64 sequenceNumber = 0;  // Sequence number to ensure deterministic LRU ordering
 };
 
 /**
- * 连接池统计信息
+ * Connection pool statistics
  */
 struct ConnectionPoolStats
 {
@@ -103,12 +103,12 @@ struct ConnectionPoolStats
     int connectionTimeouts = 0;
     QDateTime lastConnectionCreated;
     QDateTime lastConnectionDestroyed;
-    double averageConnectionAge = 0.0;  // 平均连接存活时间（秒）
+    double averageConnectionAge = 0.0;  // Average connection lifetime (seconds)
     int peakUsedConnections = 0;
 };
 
 /**
- * 连接健康状态
+ * Connection health status
  */
 enum class ConnectionHealth
 {
@@ -119,7 +119,7 @@ enum class ConnectionHealth
 };
 
 /**
- * 连接池健康报告
+ * Connection pool health report
  */
 struct ConnectionPoolHealth
 {
@@ -134,23 +134,23 @@ struct ConnectionPoolHealth
 };
 
 /**
- * 缓存统计信息
+ * Cache statistics
  */
 struct CacheStats
 {
-    int totalRequests = 0;      // 总请求数
-    int hitCount = 0;           // 命中次数
-    int missCount = 0;          // 未命中次数
-    int evictionCount = 0;      // 驱逐次数
-    int expiredCount = 0;       // 过期清理次数
-    double hitRate = 0.0;       // 命中率
-    int currentSize = 0;        // 当前缓存大小
-    int maxSize = 0;            // 最大缓存大小
-    QDateTime lastAccess;       // 最后访问时间
-    QDateTime lastEviction;     // 最后驱逐时间
-    QDateTime lastExpiration;   // 最后过期清理时间
+    int totalRequests = 0;      // Total request count;总请求数
+    int hitCount = 0;           // Hit count;命中次数
+    int missCount = 0;          // Miss count;未命中次数
+    int evictionCount = 0;      // Eviction count;驱逐次数
+    int expiredCount = 0;       // Expired cleanup count;过期清理次数
+    double hitRate = 0.0;       // Hit rate;命中率
+    int currentSize = 0;        // Current cache size;当前缓存大小
+    int maxSize = 0;            // Maximum cache size
+    QDateTime lastAccess;       // Last access time;最后访问时间
+    QDateTime lastEviction;     // Last eviction time;最后驱逐时间
+    QDateTime lastExpiration;   // Last expiration cleanup time;最后过期清理时间
     
-    // 计算命中率
+    // Calculate hit rate
     void updateHitRate() {
         if (totalRequests > 0) {
             hitRate = static_cast<double>(hitCount) / totalRequests;
